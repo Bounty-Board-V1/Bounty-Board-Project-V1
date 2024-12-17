@@ -1,35 +1,40 @@
 const express = require("express");
-const sequelize = require("./config/database");
+const sequelize = require("./models").sequelize; // Sequelize instance
 require("dotenv").config();
 
-// Models
-const User = require("./models/User");
-
-// Routes
 const userRoutes = require("./routes/userRoutes");
+const projectRoutes = require("./routes/projectRoutes");
+const milestoneRoutes = require("./routes/milestoneRoutes");
+const rewardRoutes = require("./routes/rewardRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const fileRoutes = require("./routes/fileRoutes");
 
 const app = express();
 
 // Middleware
 app.use(express.json());
 
-// Test Database Connection
+// Test database connection
 sequelize
   .authenticate()
   .then(() => console.log("Database connected successfully"))
   .catch((err) => console.error("Unable to connect to the database:", err));
 
-// Synchronize the database
-sequelize
-  .sync({ force: false }) // Set force: true to drop and recreate tables
-  .then(() => console.log("Database synchronized"))
-  .catch((err) => console.error("Error synchronizing database:", err));
+// Routes
+app.use("/api/users", userRoutes);
+app.use("/api/projects", projectRoutes);
+app.use("/api/milestones", milestoneRoutes);
+app.use("/api/rewards", rewardRoutes);
+app.use("/api/notifications", notificationRoutes);
+app.use("/api/files", fileRoutes);
 
-// Example Route
-app.get("/", (req, res) => res.send("API is running..."));
+// Base route
+app.get("/", (req, res) => res.send("Bounty Board API is running..."));
 
-// Main Route
-app.use("/api", userRoutes);
+// Error handling middleware
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).send({ error: "Something went wrong!" });
+});
 
-// Export the app
 module.exports = app;
