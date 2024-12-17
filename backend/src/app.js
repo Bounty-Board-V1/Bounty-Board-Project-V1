@@ -1,18 +1,36 @@
 const express = require("express");
 const sequelize = require("./models").sequelize; // Sequelize instance
-require("dotenv").config();
+const session = require("express-session");
+const passport = require("./config/microsoftAuth");
+const cors = require("cors");
 
+// Routes
+const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-const projectRoutes = require("./routes/projectRoutes");
-const milestoneRoutes = require("./routes/milestoneRoutes");
-const rewardRoutes = require("./routes/rewardRoutes");
-const notificationRoutes = require("./routes/notificationRoutes");
-const fileRoutes = require("./routes/fileRoutes");
+
+require("dotenv").config();
 
 const app = express();
 
+// CORS Configuration
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Allow requests from your frontend URL
+    credentials: true, // Allow credentials (cookies, authorization headers)
+  })
+);
+
 // Middleware
 app.use(express.json());
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Test database connection
 sequelize
@@ -27,12 +45,8 @@ sequelize
   .catch((err) => console.error("Error synchronizing database:", err));
 
 // Routes
-app.use("/api/users", userRoutes);
-app.use("/api/projects", projectRoutes);
-app.use("/api/milestones", milestoneRoutes);
-app.use("/api/rewards", rewardRoutes);
-app.use("/api/notifications", notificationRoutes);
-app.use("/api/files", fileRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
 
 // Base route
 app.get("/", (req, res) => res.send("Bounty Board API is running..."));

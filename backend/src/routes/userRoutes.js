@@ -1,11 +1,22 @@
 const express = require("express");
-const router = express.Router();
+const { User } = require("../models"); // Sequelize User model
+
+// Middlewares
+const authMiddleware = require("../middlewares/authMiddleware");
+const upload = require("../middlewares/uploadMiddleware");
+
+// Controller
 const userController = require("../controllers/userController");
 
-router.get("/", userController.getAllUsers);
-router.get("/:id", userController.getUser);
-router.post("/", userController.createUser);
-router.put("/:id", userController.updateUser);
-router.delete("/:id", userController.deleteUser);
+const router = express.Router();
+
+router.get("/profile", authMiddleware, userController.getUserProfile);
+
+router.post(
+  "/complete-profile",
+  authMiddleware,
+  upload.fields([{ name: "image" }, { name: "cv" }]),
+  userController.completeUserProfile
+);
 
 module.exports = router;
