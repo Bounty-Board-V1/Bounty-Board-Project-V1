@@ -21,7 +21,7 @@ const User = sequelize.define("User", {
   },
   password: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   role: {
     type: DataTypes.ENUM("admin", "poster", "hunter"),
@@ -35,6 +35,11 @@ const User = sequelize.define("User", {
   cv: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  profileCompleted: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false, // By default, the profile is not completed
+    allowNull: false,
   },
 });
 
