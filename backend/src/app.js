@@ -20,6 +20,12 @@ sequelize
   .then(() => console.log("Database connected successfully"))
   .catch((err) => console.error("Unable to connect to the database:", err));
 
+// Synchronize models
+sequelize
+  .sync({ force: true }) // Use force: true ONLY for development resets
+  .then(() => console.log("Database synchronized"))
+  .catch((err) => console.error("Error synchronizing database:", err));
+
 // Routes
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);

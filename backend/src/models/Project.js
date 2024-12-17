@@ -43,8 +43,4 @@ const Project = sequelize.define("Project", {
   },
 });
 
-// Ensure unique aliases
-Project.belongsTo(User, { foreignKey: "posterId", as: "postedProjects" }); // Changed to 'poster'
-Project.belongsTo(User, { foreignKey: "hunterId", as: "assignedProjects" }); // Changed to 'hunter'
-
 module.exports = Project;
