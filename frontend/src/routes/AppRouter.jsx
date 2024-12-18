@@ -17,7 +17,7 @@ const AppRouter = () => {
     <Router>
       <Routes>
         {/* Define Routes */}
-        <Route path="/" element={<Navigate to="/home" />} />
+        <Route path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<Login />} />
         <Route path="/profile" element={<Profile />} />
         <Route path="/home" element={<Home />} />

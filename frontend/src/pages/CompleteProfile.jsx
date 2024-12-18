@@ -1,7 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 const CompleteProfile = () => {
+  const { user } = useAuth({ protectCompleteProfile: true });
   const [password, setPassword] = useState("");
   const [image, setImage] = useState(null);
   const [cv, setCv] = useState(null);
@@ -10,8 +12,9 @@ const CompleteProfile = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  // Get token from query params
-  const token = searchParams.get("token");
+  // Get token from query params or localStorage
+  const queryToken = searchParams.get("token");
+  const token = queryToken || localStorage.getItem("token");
 
   // Handle Form Submission
   const handleSubmit = async (e) => {
@@ -40,7 +43,7 @@ const CompleteProfile = () => {
       if (!response.ok) throw new Error(data.message);
 
       alert("Profile completed successfully!");
-      navigate("/home"); // Redirect to dashboard
+      navigate("/home"); // Redirect to home page
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {

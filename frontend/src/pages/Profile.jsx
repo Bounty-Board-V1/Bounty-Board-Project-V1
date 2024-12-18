@@ -1,59 +1,14 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
-  const location = useLocation();
+  const { user } = useAuth(); // Fetch and validate user
   const navigate = useNavigate();
-  const [hasFetched, setHasFetched] = useState(false);
 
-  const fetchUserData = useCallback(
-    async (token) => {
-      try {
-        console.log("Fetching user data...");
-        const response = await fetch("http://localhost:5000/api/user/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          credentials: "include",
-        });
-
-        if (!response.ok) {
-          console.error("Error: Invalid response or network issue");
-          localStorage.removeItem("token");
-          navigate("/login");
-          return;
-        }
-
-        const data = await response.json();
-        setUser(data.user);
-      } catch (err) {
-        console.error("Error fetching user data:", err);
-        localStorage.removeItem("token");
-        navigate("/login");
-      }
-    },
-    [navigate]
-  );
-
-  useEffect(() => {
-    if (hasFetched) return; // Prevent redundant calls
-
-    // Extract token from the URL
-    const queryParams = new URLSearchParams(location.search);
-    const token = queryParams.get("token") || localStorage.getItem("token");
-
-    if (token) {
-      setHasFetched(true); // Mark fetch as complete
-      fetchUserData(token);
-      if (queryParams.get("token")) {
-        localStorage.setItem("token", token);
-        navigate("/profile", { replace: true });
-      }
-    } else {
-      navigate("/login");
-    }
-  }, [location, navigate, fetchUserData, hasFetched]);
+  if (!user) {
+    return <p>Loading...</p>; // Show a loading state until user data is fetched
+  }
 
   const handleLogout = () => {
     // Remove token from localStorage
