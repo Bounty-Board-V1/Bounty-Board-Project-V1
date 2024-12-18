@@ -40,7 +40,7 @@ const CompleteProfile = () => {
       if (!response.ok) throw new Error(data.message);
 
       alert("Profile completed successfully!");
-      navigate("/profile"); // Redirect to dashboard
+      navigate("/home"); // Redirect to dashboard
     } catch (err) {
       setError(err.message || "Something went wrong. Please try again.");
     } finally {

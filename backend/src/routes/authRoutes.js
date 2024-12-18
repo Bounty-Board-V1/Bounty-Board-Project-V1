@@ -1,6 +1,6 @@
 const express = require("express");
 const passport = require("../config/microsoftAuth");
-const { microsoftCallback } = require("../controllers/authController");
+const { logout, microsoftCallback } = require("../controllers/authController");
 
 const router = express.Router();
 
@@ -16,5 +16,8 @@ router.get(
   passport.authenticate("azure_ad_oauth2", { failureRedirect: "/login" }),
   microsoftCallback
 );
+
+// Logout Route
+router.get("/logout", logout);
 
 module.exports = router;
