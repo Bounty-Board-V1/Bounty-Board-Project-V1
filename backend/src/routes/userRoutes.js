@@ -19,4 +19,13 @@ router.post(
   userController.completeUserProfile
 );
 
+// Add the new route for updating user profile
+router.put(
+  "/profile",
+  authMiddleware,
+  upload.fields([{ name: "image" }, { name: "cv" }]),
+  userController.updateUserProfile
+);
+
 module.exports = router;
+
