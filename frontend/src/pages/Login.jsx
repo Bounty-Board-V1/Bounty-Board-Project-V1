@@ -1,7 +1,17 @@
-import React from "react";
-import axiosClient from "../api/axiosClient";
+import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if the user is already logged in
+    const token = localStorage.getItem("token");
+    if (token) {
+      navigate("/home"); // Redirect to the dashboard if logged in
+    }
+  }, [navigate]);
+
   const handleMicrosoftLogin = () => {
     window.location.href = "http://localhost:5000/api/auth/microsoft";
   };

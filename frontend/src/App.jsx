@@ -1,15 +1,13 @@
 import React from "react";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
-import theme from "./styles/theme";
 import AppRouter from "./routes/AppRouter";
+import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
+    <>
+      <Navbar />
       <AppRouter />
-    </ThemeProvider>
+    </>
   );
 }
 
