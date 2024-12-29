@@ -1,32 +1,24 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Avatar, AvatarImage, AvatarFallback } from "./ui/avatar";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import { ProfileForm } from "./ProfileForm";
-import { PasswordResetForm } from "./PasswordResetForm";
-import { TechStackSelect } from "./TechStackSelect";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ProfileForm } from "../components/ProfileForm";
+import { PasswordResetForm } from "../components/PasswordResetForm";
+import { TechStackSelect } from "../components/TechStackSelect";
+import useAuth from "@/hooks/useAuth";
 
 export function AccountPage() {
-  const [user, setUser] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    secondaryEmail: "john.alternate@example.com",
-    techStack: ["react", "nodejs"],
-    profilePicture: "/placeholder-avatar.jpg",
-    cv: null,
-  });
+  const { user } = useAuth(); // Fetch and validate user
 
-  const handleProfileUpdate = (updatedProfile) => {
-    setUser((prevUser) => ({
-      ...prevUser,
-      ...updatedProfile,
-    }));
-  };
+  const handleProfileUpdate = (updatedProfile) => {};
 
+  if (!user) {
+    return <p>Loading...</p>; // Show a loading state until user data is fetched
+  }
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-4xl font-bold mb-8 text-center">Your Account</h1>
@@ -37,7 +29,7 @@ export function AccountPage() {
           </CardHeader>
           <CardContent className="flex flex-col items-center">
             <Avatar className="w-32 h-32 mb-4">
-              <AvatarImage src={user.profilePicture} alt={user.name} />
+              <AvatarImage alt={user.name} />
               <AvatarFallback>
                 {user.name
                   .split(" ")
