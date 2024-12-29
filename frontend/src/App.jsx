@@ -1,13 +1,11 @@
 import React from "react";
 import AppRouter from "./routes/AppRouter";
-import Navbar from "./components/Navbar";
 
 function App() {
   return (
-    <>
-      <Navbar />
+    <div className="bg-gray-900">
       <AppRouter />
-    </>
+    </div>
   );
 }
 

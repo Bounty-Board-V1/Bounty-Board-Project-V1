@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { React, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import axiosClient from "../api/axiosClient";
 
 const CompleteProfile = () => {
   const { user } = useAuth({ protectCompleteProfile: true });
@@ -28,24 +29,27 @@ const CompleteProfile = () => {
     if (cv) formData.append("cv", cv);
 
     try {
-      const response = await fetch(
-        "http://localhost:5000/api/user/complete-profile",
+      // Use axiosClient to send the form data
+      const response = await axiosClient.post(
+        "/user/complete-profile",
+        formData, // Pass the FormData object directly
         {
-          method: "POST",
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // Include the Bearer token
           },
-          body: formData,
+          withCredentials: true, // Include cookies if necessary
         }
       );
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message);
-
+      // Handle successful response
       alert("Profile completed successfully!");
       navigate("/home"); // Redirect to home page
     } catch (err) {
-      setError(err.message || "Something went wrong. Please try again.");
+      // Handle errors
+      console.error("Error completing profile:", err);
+      setError(
+        err.response?.data?.message || "Something went wrong. Please try again."
+      );
     } finally {
       setLoading(false);
     }

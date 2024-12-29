@@ -32,7 +32,7 @@ const microsoftCallback = async (req, res) => {
       );
     }
 
-    res.redirect("http://localhost:3000/home");
+    res.redirect(`http://localhost:3000/profile?token=${token}`);
   } catch (error) {
     console.error("Error handling OAuth callback:", error);
     res.status(500).json({ message: "Internal server error" });
