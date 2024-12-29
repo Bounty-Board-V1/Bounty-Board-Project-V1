@@ -1,37 +1,58 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import { Input } from "./ui/input";
+import { UserMenu } from "./UserMenu";
 
-import UserDropdown from "./UserDropdown";
-
-export default function Navbar() {
+export function Navbar() {
   return (
-    <>
-      {/* Navbar */}
-      <nav className="absolute top-0 left-0 w-full z-10 bg-transparent md:flex-row md:flex-nowrap md:justify-start flex items-center p-4">
-        <div className="w-full mx-autp items-center flex justify-between md:flex-nowrap flex-wrap md:px-10 px-4">
-          {/* Brand */}
-          <a
-            className="text-white text-sm uppercase hidden lg:inline-block font-semibold"
-            href="#pablo"
-            onClick={e => e.preventDefault()}
-          >
-            Dashboard
-          </a>
-          {/* Form */}
-          <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
-            <div className="relative flex w-full flex-wrap items-stretch">
-              <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                <i className="fas fa-search"></i>
-              </span>
-              <input type="text" placeholder="Search here..." className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"/>
+    <nav className="bg-white shadow">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16">
+          <div className="flex items-center">
+            {/* Logo */}
+            <Link to="/" className="flex-shrink-0 flex items-center">
+              <span className="text-2xl font-bold text-gray-800">Logo</span>
+            </Link>
+            {/* Navigation Links */}
+            <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
+              <Link
+                to="/"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Home
+              </Link>
+              <Link
+                to="/about"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                About
+              </Link>
+              <Link
+                to="/services"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Services
+              </Link>
+              <Link
+                to="/contact"
+                className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+              >
+                Contact
+              </Link>
             </div>
-          </form>
-          {/* User */}
-          <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
-            <UserDropdown />
-          </ul>
+          </div>
+          <div className="flex items-center">
+            {/* Search Bar */}
+            <div className="hidden sm:block">
+              <Input type="search" placeholder="Search..." className="w-64" />
+            </div>
+            {/* User Menu */}
+            <div className="ml-4 flex items-center">
+              <UserMenu />
+            </div>
+          </div>
         </div>
-      </nav>
-      {/* End Navbar */}
-    </>
+      </div>
+    </nav>
   );
 }

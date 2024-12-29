@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import axiosClient from "../api/axiosClient"; // Import axiosClient
 
 const useAuth = ({ protectCompleteProfile = false } = {}) => {
   const [user, setUser] = useState(null); // Store user data
@@ -11,21 +12,16 @@ const useAuth = ({ protectCompleteProfile = false } = {}) => {
     async (token) => {
       try {
         console.log("Fetching user data...");
-        const response = await fetch("http://localhost:5000/api/user/profile", {
+
+        // Use axiosClient to fetch user data
+        const response = await axiosClient.get("/user/profile", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          credentials: "include",
+          withCredentials: true, // Include cookies if necessary
         });
 
-        if (!response.ok) {
-          console.error("Error: Invalid response or network issue");
-          localStorage.removeItem("token");
-          navigate("/login");
-          return;
-        }
-
-        const data = await response.json();
+        const data = await response.data; // Get user data from the response
         setUser(data.user); // Store user data
 
         // Redirect if the user has already completed their profile
