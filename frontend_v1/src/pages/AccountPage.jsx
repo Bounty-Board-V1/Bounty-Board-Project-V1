@@ -77,6 +77,17 @@ export function AccountPage() {
           </CardContent>
         </Card>
       </div>
+      <Card className="mt-8">
+        <CardHeader>
+          <CardTitle>Tech Stack</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <TechStackSelect
+            value={user.techStack}
+            onChange={(techStack) => handleProfileUpdate({ techStack })}
+          />
+        </CardContent>
+      </Card>
     </div>
   );
 }

@@ -20,7 +20,7 @@ export function TechStackSelect({ value = [], onChange }) {
   return (
     <MultiSelect
       options={techOptions}
-      value={value}
+      value={value || []} // Add a check for undefined value
       onChange={onChange}
       placeholder="Select your tech stack"
     />

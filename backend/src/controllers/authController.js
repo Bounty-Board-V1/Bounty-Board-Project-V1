@@ -27,12 +27,10 @@ const microsoftCallback = async (req, res) => {
 
     // Redirect based on profile completion status
     if (!user.profileCompleted) {
-      return res.redirect(
-        `http://localhost:3000/complete-profile?token=${token}`
-      );
+      return res.redirect(`http://localhost:5173/account?token=${token}`);
     }
 
-    res.redirect(`http://localhost:3000/profile?token=${token}`);
+    res.redirect(`http://localhost:5173/account?token=${token}`);
   } catch (error) {
     console.error("Error handling OAuth callback:", error);
     res.status(500).json({ message: "Internal server error" });
