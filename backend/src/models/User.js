@@ -41,6 +41,11 @@ const User = sequelize.define("User", {
     defaultValue: false, // By default, the profile is not completed
     allowNull: false,
   },
+  techStack: {
+    type: DataTypes.ARRAY(DataTypes.STRING), // Use ARRAY for PostgreSQL
+    allowNull: true,
+    defaultValue: [], // Default to an empty array
+  },
 });
 
 module.exports = User;

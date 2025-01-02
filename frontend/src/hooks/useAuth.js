@@ -42,7 +42,14 @@ const useAuth = ({ protectCompleteProfile = false } = {}) => {
 
     // Extract token from the URL or localStorage
     const queryParams = new URLSearchParams(location.search);
-    const token = queryParams.get("token") || localStorage.getItem("token");
+    const token = queryParams.get("token") || localStorage/* The `.getItem("token");` method is used to
+    retrieve the value associated with the key
+    "token" from the `localStorage`. In this
+    context, it is retrieving the token stored
+    in the browser's `localStorage` that was
+    previously saved when the user logged in
+    or authenticated. */
+    .getItem("token");
 
     if (token) {
       setHasFetched(true); // Mark fetch as complete

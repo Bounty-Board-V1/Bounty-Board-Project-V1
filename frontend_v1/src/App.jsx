@@ -10,15 +10,14 @@ import { Navbar } from "./components/Navbar";
 import { ProjectsSection } from "./components/ProjectsSection";
 import { AccountPage } from "./pages/AccountPage";
 import Login from "./pages/LoginPage";
-
-function Home() {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold mb-4">Welcome to Our Platform</h1>
-      <ProjectsSection />
-    </div>
-  );
-}
+import HomePage from "./pages/HomePage";
+import { Footer } from "./components/Footer";
+import MyProjectsPage from "./pages/MyProjectsPage";
+import CreateProjectPage from "./pages/CreateProjectPage";
+import SingleProjectPage from "./pages/SingleProjectPage";
+import SettingsPage from "./pages/SettingsPage";
+import SearchPage from "./pages/SearchPage";
+import NotificationsPage from "./pages/NotificationsPage";
 
 function About() {
   return <h1 className="text-3xl font-bold">About Page</h1>;
@@ -39,19 +38,26 @@ function AppContent() {
   const noNavbarRoutes = ["/login"];
   const showNavbar = !noNavbarRoutes.includes(location.pathname);
 
+  const noFooterRoutes = ["/login"];
+  const showFooter = !noFooterRoutes.includes(location.pathname);
+
   return (
     <div className="App">
       {showNavbar && <Navbar />}
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/services" element={<Services />} />
-          <Route path="/contact" element={<Contact />} />
           <Route path="/account" element={<AccountPage />} />
+          <Route path="/my-projects" element={<MyProjectsPage />} />
+          <Route path="/create-project" element={<CreateProjectPage />} />
+          <Route path="/single-project/:id" element={<SingleProjectPage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/notifications" element={<NotificationsPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
         </Routes>
       </main>
+      {showFooter && <Footer />}
     </div>
   );
 }

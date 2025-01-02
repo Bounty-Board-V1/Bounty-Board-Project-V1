@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
+import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import {
@@ -10,8 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { User, Settings, LogOut } from "lucide-react";
-import { Link } from "react-router-dom";
+import { User, Settings, LogOut, FolderKanban } from "lucide-react";
 
 export function UserMenu() {
   return (
@@ -35,14 +35,22 @@ export function UserMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <Link to="/account" className="flex items-center">
+          <Link to="/account" className="flex items-center w-full">
             <User className="mr-2 h-4 w-4" />
             <span>Account</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Settings</span>
+          <Link to="/my-projects" className="flex items-center w-full">
+            <FolderKanban className="mr-2 h-4 w-4" />
+            <span>My Projects</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link to="/settings" className="flex items-center w-full">
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Settings</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
