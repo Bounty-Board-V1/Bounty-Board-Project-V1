@@ -1,13 +1,21 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Input } from "./ui/input";
 import { UserMenu } from "./UserMenu";
-import { Button } from "./ui/button";
+import { Button } from "@/components/ui/button";
 import { Menu } from "lucide-react";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+} from "@/components/ui/navigation-menu";
 
-export function Navbar() {
+// Add a prop to determine if the user is a Poster
+export function Navbar({ isPoster = true }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -17,21 +25,74 @@ export function Navbar() {
           <div className="flex items-center">
             {/* Logo */}
             <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-gray-800">Logo</span>
+              <span className="text-2xl font-bold text-gray-800">
+                BountyBoard
+              </span>
             </Link>
             {/* Navigation Links (hidden on mobile) */}
             <div className="hidden md:ml-6 md:flex md:space-x-8">
-              <NavLink to="/">Home</NavLink>
-              <NavLink to="/about">About</NavLink>
-              <NavLink to="/services">Services</NavLink>
-              <NavLink to="/contact">Contact</NavLink>
+              <NavigationMenu>
+                <NavigationMenuList>
+                  <NavigationMenuItem>
+                    <NavigationMenuTrigger>Projects</NavigationMenuTrigger>
+                    <NavigationMenuContent className="bg-white">
+                      <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]">
+                        <li className="row-span-3">
+                          <NavigationMenuLink asChild>
+                            <Link
+                              className="flex h-full w-full select-none flex-col justify-start rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md"
+                              to="/my-projects"
+                            >
+                              <div className="mb-2 text-lg font-medium">
+                                My Projects
+                              </div>
+                              <p className="text-sm leading-tight text-muted-foreground">
+                                View and manage your current projects
+                              </p>
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+                        {isPoster && (
+                          <li>
+                            <NavigationMenuLink asChild>
+                              <Link
+                                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                                to="/create-project"
+                              >
+                                <div className="text-sm font-medium leading-none">
+                                  Create Project
+                                </div>
+                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                  Start a new project and find collaborators
+                                </p>
+                              </Link>
+                            </NavigationMenuLink>
+                          </li>
+                        )}
+                        <li>
+                          <NavigationMenuLink asChild>
+                            <Link
+                              className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                              to="/search"
+                            >
+                              <div className="text-sm font-medium leading-none">
+                                Search Projects
+                              </div>
+                              <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+                                Find projects that match your skills and
+                                interests
+                              </p>
+                            </Link>
+                          </NavigationMenuLink>
+                        </li>
+                      </ul>
+                    </NavigationMenuContent>
+                  </NavigationMenuItem>
+                </NavigationMenuList>
+              </NavigationMenu>
             </div>
           </div>
           <div className="flex items-center">
-            {/* Search Bar */}
-            <div className="hidden md:block">
-              <Input type="search" placeholder="Search..." className="w-64" />
-            </div>
             {/* User Menu */}
             <div className="ml-4 flex items-center">
               <UserMenu />
@@ -52,17 +113,16 @@ export function Navbar() {
       </div>
 
       {/* Mobile menu, show/hide based on menu state */}
-      {isMenuOpen && (
-        <div className="md:hidden">
-          <div className="pt-2 pb-3 space-y-1">
-            <MobileNavLink to="/">Home</MobileNavLink>
-            <MobileNavLink to="/about">About</MobileNavLink>
-            <MobileNavLink to="/services">Services</MobileNavLink>
-            <MobileNavLink to="/contact">Contact</MobileNavLink>
-            <MobileNavLink to="/profile">Profile</MobileNavLink>
-          </div>
+      <div className={`md:hidden ${isMenuOpen ? "block" : "hidden"}`}>
+        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+          <MobileNavLink to="/">Home</MobileNavLink>
+          <MobileNavLink to="/my-projects">My Projects</MobileNavLink>
+          {isPoster && (
+            <MobileNavLink to="/create-project">Create Project</MobileNavLink>
+          )}
+          <MobileNavLink to="/search">Search Projects</MobileNavLink>
         </div>
-      )}
+      </div>
     </nav>
   );
 }
@@ -71,7 +131,7 @@ function NavLink({ to, children }) {
   return (
     <Link
       to={to}
-      className="border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+      className="text-gray-500 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
     >
       {children}
     </Link>
@@ -82,7 +142,7 @@ function MobileNavLink({ to, children }) {
   return (
     <Link
       to={to}
-      className="border-transparent text-gray-500 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium"
+      className="text-gray-300 hover:bg-gray-700 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
     >
       {children}
     </Link>

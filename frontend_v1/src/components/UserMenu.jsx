@@ -41,12 +41,6 @@ export function UserMenu() {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Link to="/my-projects" className="flex items-center w-full">
-            <FolderKanban className="mr-2 h-4 w-4" />
-            <span>My Projects</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
           <Link to="/settings" className="flex items-center w-full">
             <Settings className="mr-2 h-4 w-4" />
             <span>Settings</span>

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -126,9 +126,10 @@ function SingleProjectPage() {
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline">Edit Project</Button>
-          <Button>Submit Proposal</Button>
+        <CardFooter className="flex justify-end">
+          <Button asChild>
+            <Link to={`/project/${id}/workplace`}>Go to Workplace</Link>
+          </Button>
         </CardFooter>
       </Card>
     </div>
