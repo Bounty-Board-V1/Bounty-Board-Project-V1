@@ -25,13 +25,15 @@ export function MultiSelect({
 }) {
   const [open, setOpen] = useState(false);
 
+  // Ensure `value` is always an array
+  const safeValue = Array.isArray(value) ? value : [];
+
   const handleSelect = (currentValue) => {
     const newValue = value.includes(currentValue)
-      ? value.filter((item) => item !== currentValue)
-      : [...value, currentValue];
+      ? value.filter((item) => item !== currentValue) // Remove if already selected
+      : [...value, currentValue]; // Add if not selected
     onChange(newValue);
   };
-
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -41,7 +43,7 @@ export function MultiSelect({
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value.length > 0 ? `${value.length} selected` : placeholder}
+          {safeValue.length > 0 ? `${safeValue.length} selected` : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -50,20 +52,25 @@ export function MultiSelect({
           <CommandInput placeholder="Search..." />
           <CommandEmpty>No option found.</CommandEmpty>
           <CommandGroup>
-            {options.map((option) => (
-              <CommandItem
-                key={option.value}
-                onSelect={() => handleSelect(option.value)}
-              >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    value.includes(option.value) ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                {option.label}
-              </CommandItem>
-            ))}
+            {Array.isArray(options) &&
+              options
+                .filter((option) => option && typeof option === "string")
+                .map((option) => (
+                  <CommandItem
+                    key={option}
+                    onSelect={() => handleSelect(option)}
+                  >
+                    <Check
+                      className={cn(
+                        "mr-2 h-4 w-4",
+                        Array.isArray(value) && value.includes(option)
+                          ? "opacity-100"
+                          : "opacity-0"
+                      )}
+                    />
+                    {option}
+                  </CommandItem>
+                ))}
           </CommandGroup>
         </Command>
       </PopoverContent>

@@ -13,6 +13,7 @@ const getUserProfile = async (req, res) => {
         "image",
         "cv",
         "profileCompleted",
+        "techStack",
       ],
     });
 
@@ -72,8 +73,11 @@ const updateUserProfile = async (req, res) => {
       ...(name && { name }),
       ...(email && { email }),
       ...(password && { password: hashedPassword }),
-      ...(req.files?.image && { image: `/uploads/${req.files.image[0].filename}` }),
+      ...(req.files?.image && {
+        image: `/uploads/${req.files.image[0].filename}`,
+      }),
       ...(req.files?.cv && { cv: `/uploads/${req.files.cv[0].filename}` }),
+      ...(req.body.techStack && { techStack: req.body.techStack }), // Add techStack if provided
     };
 
     if (Object.keys(updatedFields).length === 0) {
@@ -82,8 +86,12 @@ const updateUserProfile = async (req, res) => {
 
     // Update user profile
     const [updated] = await User.update(updatedFields, {
-      where: { id: req.user.id },
-    });
+      where: { id: userId },
+    })
+      .then(() =>
+        res.status(200).json({ message: "User updated successfully." })
+      )
+      .catch((err) => res.status(500).json({ error: err.message }));
 
     if (!updated) return res.status(404).json({ message: "User not found" });
 

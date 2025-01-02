@@ -13,6 +13,7 @@ import useAuth from "@/hooks/useAuth";
 
 export function AccountPage() {
   const { user } = useAuth(); // Fetch and validate user
+  console.log(user);
 
   const handleProfileUpdate = (updatedProfile) => {};
 
@@ -83,7 +84,7 @@ export function AccountPage() {
         </CardHeader>
         <CardContent>
           <TechStackSelect
-            value={user.techStack}
+            value={Array.isArray(user.techStack) ? user.techStack : []}
             onChange={(techStack) => handleProfileUpdate({ techStack })}
           />
         </CardContent>

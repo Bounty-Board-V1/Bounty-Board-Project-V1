@@ -3,24 +3,18 @@
 import React from "react";
 import { MultiSelect } from "./ui/multi-select";
 
-const techOptions = [
-  { value: "react", label: "React" },
-  { value: "vue", label: "Vue.js" },
-  { value: "angular", label: "Angular" },
-  { value: "nodejs", label: "Node.js" },
-  { value: "python", label: "Python" },
-  { value: "java", label: "Java" },
-  { value: "ruby", label: "Ruby" },
-  { value: "csharp", label: "C#" },
-  { value: "php", label: "PHP" },
-  { value: "go", label: "Go" },
-];
+const techOptions = ["react", "ruby", "go"];
+
+const safeOptions = Array.isArray(techOptions) ? techOptions : [];
 
 export function TechStackSelect({ value = [], onChange }) {
+  console.log("Options in MultiSelect:", techOptions);
+  console.log("Value in MultiSelect:", value);
+
   return (
     <MultiSelect
-      options={techOptions}
-      value={value || []} // Add a check for undefined value
+      options={safeOptions}
+      value={Array.isArray(value) ? value : []}
       onChange={onChange}
       placeholder="Select your tech stack"
     />
