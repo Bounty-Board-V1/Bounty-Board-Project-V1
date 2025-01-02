@@ -7,11 +7,12 @@ const upload = require("../middlewares/uploadMiddleware");
 
 // Controller
 const userController = require("../controllers/userController");
-
 const router = express.Router();
 
+// Get user profile
 router.get("/profile", authMiddleware, userController.getUserProfile);
 
+// Complete user profile with image and CV upload
 router.post(
   "/complete-profile",
   authMiddleware,
@@ -19,7 +20,7 @@ router.post(
   userController.completeUserProfile
 );
 
-// Add the new route for updating user profile
+// Update user profile
 router.put(
   "/profile",
   authMiddleware,
@@ -27,5 +28,7 @@ router.put(
   userController.updateUserProfile
 );
 
-module.exports = router;
+// Reset password
+router.post("/reset-password", authMiddleware, userController.resetPassword);
 
+module.exports = router;
