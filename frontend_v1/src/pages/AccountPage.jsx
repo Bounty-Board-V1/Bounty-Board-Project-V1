@@ -11,7 +11,7 @@ import { PasswordResetForm } from "../components/PasswordResetForm";
 import { TechStackSelect } from "../components/TechStackSelect";
 import useAuth from "@/hooks/useAuth";
 
-export function AccountPage() {
+export default function AccountPage() {
   const { user } = useAuth(); // Fetch and validate user
   console.log(user);
 
