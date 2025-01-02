@@ -7,50 +7,36 @@ import {
   useLocation,
 } from "react-router-dom";
 import { Navbar } from "./components/Navbar";
-import { ProjectsSection } from "./components/ProjectsSection";
-import { AccountPage } from "./pages/AccountPage";
-import Login from "./pages/LoginPage";
-import HomePage from "./pages/HomePage";
 import { Footer } from "./components/Footer";
+import HomePage from "./pages/HomePage";
 import MyProjectsPage from "./pages/MyProjectsPage";
+import LoginPage from "./pages/LoginPage";
+import AccountPage from "./pages/AccountPage";
 import CreateProjectPage from "./pages/CreateProjectPage";
 import SingleProjectPage from "./pages/SingleProjectPage";
-import SettingsPage from "./pages/SettingsPage";
 import SearchPage from "./pages/SearchPage";
 import NotificationsPage from "./pages/NotificationsPage";
+import SettingsPage from "./pages/SettingsPage";
 import ProjectWorkplace from "./pages/ProjectWorkplace";
+import { AdminDashboard } from "./components/AdminDashboard";
+import { AdminHome } from "./pages/admin/AdminHome";
+import { UserList } from "./pages/admin/user/UserList";
+import { UserForm } from "./pages/admin/user/UserForm";
+import { ProjectList } from "./pages/admin/project/ProjectList";
+import { ProjectForm } from "./pages/admin/project/ProjectForm";
 
-function About() {
-  return <h1 className="text-3xl font-bold">About Page</h1>;
-}
-
-function Services() {
-  return <h1 className="text-3xl font-bold">Services Page</h1>;
-}
-
-function Contact() {
-  return <h1 className="text-3xl font-bold">Contact Page</h1>;
-}
-
-function AppContent() {
+function MainAppRoutes() {
   const location = useLocation();
-
-  // Define routes where Navbar should not be displayed
-  const noNavbarRoutes = ["/login"];
-  const showNavbar = !noNavbarRoutes.includes(location.pathname);
-
-  const noFooterRoutes = ["/login"];
-  const showFooter = !noFooterRoutes.includes(location.pathname);
-
+  const isLoginPage = location.pathname === "/login";
   return (
     <div className="App">
-      {showNavbar && <Navbar />}
+      {!isLoginPage && <Navbar />}
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/account" element={<AccountPage />} />
           <Route path="/my-projects" element={<MyProjectsPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/account" element={<AccountPage />} />
           <Route path="/create-project" element={<CreateProjectPage />} />
           <Route path="/single-project/:id" element={<SingleProjectPage />} />
           <Route path="/search" element={<SearchPage />} />
@@ -62,15 +48,34 @@ function AppContent() {
           />
         </Routes>
       </main>
-      {showFooter && <Footer />}
+      <Footer />
     </div>
+  );
+}
+
+function AdminRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<AdminDashboard />}>
+        <Route index element={<AdminHome />} />
+        <Route path="users" element={<UserList />} />
+        <Route path="users/new" element={<UserForm />} />
+        <Route path="users/:id/edit" element={<UserForm />} />
+        <Route path="projects" element={<ProjectList />} />
+        <Route path="projects/new" element={<ProjectForm />} />
+        <Route path="projects/:id/edit" element={<ProjectForm />} />
+      </Route>
+    </Routes>
   );
 }
 
 function App() {
   return (
     <Router>
-      <AppContent />
+      <Routes>
+        <Route path="/admin/*" element={<AdminRoutes />} />
+        <Route path="/*" element={<MainAppRoutes />} />
+      </Routes>
     </Router>
   );
 }
