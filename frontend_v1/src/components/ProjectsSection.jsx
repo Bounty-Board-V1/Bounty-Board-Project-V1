@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { ProjectSlider } from "./ProjectSlider";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import ProjectSlider from "./ProjectSlider";
 
 const projects = [
   {

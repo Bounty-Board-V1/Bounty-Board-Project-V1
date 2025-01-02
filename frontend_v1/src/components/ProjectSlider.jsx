@@ -1,10 +1,10 @@
-/* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React, { useEffect } from "react";
 import { X } from "lucide-react";
 import { Button } from "./ui/button";
 
-export function ProjectSlider({ project, isOpen, onClose }) {
+function ProjectSlider({ project, isOpen, onClose }) {
   useEffect(() => {
     const handleEscape = (event) => {
       if (event.key === "Escape") {
@@ -143,3 +143,5 @@ export function ProjectSlider({ project, isOpen, onClose }) {
     </>
   );
 }
+
+export default ProjectSlider;

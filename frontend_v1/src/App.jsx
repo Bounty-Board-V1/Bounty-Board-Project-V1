@@ -18,6 +18,7 @@ import SingleProjectPage from "./pages/SingleProjectPage";
 import SettingsPage from "./pages/SettingsPage";
 import SearchPage from "./pages/SearchPage";
 import NotificationsPage from "./pages/NotificationsPage";
+import ProjectWorkplace from "./pages/ProjectWorkplace";
 
 function About() {
   return <h1 className="text-3xl font-bold">About Page</h1>;
@@ -55,6 +56,10 @@ function AppContent() {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/notifications" element={<NotificationsPage />} />
           <Route path="/settings" element={<SettingsPage />} />
+          <Route
+            path="/project/:projectId/workplace"
+            element={<ProjectWorkplace />}
+          />
         </Routes>
       </main>
       {showFooter && <Footer />}
