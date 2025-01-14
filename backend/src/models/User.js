@@ -19,7 +19,6 @@ const User = sequelize.define("User", {
       isEmail: true,
     },
   },
-
   secondaryEmail: {
     type: DataTypes.STRING,
     allowNull: true,

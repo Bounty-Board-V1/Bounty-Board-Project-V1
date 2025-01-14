@@ -15,7 +15,7 @@ const Request = sequelize.define("Request", {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  bountyId: {
+  projectId: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },

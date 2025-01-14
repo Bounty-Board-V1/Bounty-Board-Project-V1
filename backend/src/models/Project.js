@@ -16,6 +16,18 @@ const Project = sequelize.define("Project", {
     type: DataTypes.TEXT,
     allowNull: false,
   },
+  posterId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  hunterId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  labelId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   status: {
     type: DataTypes.ENUM("open", "in-progress", "completed", "closed"),
     defaultValue: "open",
@@ -40,7 +52,7 @@ const Project = sequelize.define("Project", {
   rewardAmount: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
-  },
+  }
 });
 
 module.exports = Project;

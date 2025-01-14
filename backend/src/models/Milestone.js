@@ -38,6 +38,5 @@ const Milestone = sequelize.define("Milestone", {
   },
 });
 
-Milestone.belongsTo(Project, { foreignKey: "projectId" });
 
 module.exports = Milestone;
