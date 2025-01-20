@@ -6,7 +6,7 @@ const {
   getTeamById,
   updateTeam,
   deleteTeam,
-} = require("/controllers/teamController");
+} = require("../controllers/teamController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
 // Routes for Teams
