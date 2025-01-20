@@ -11,22 +11,12 @@ const router = express.Router();
 
 // Get user profile
 router.get("/profile", authMiddleware, userController.getUserProfile);
-
-// Complete user profile with image and CV upload
-router.post(
-  "/complete-profile",
-  authMiddleware,
-  upload.fields([{ name: "image" }, { name: "cv" }]),
-  userController.completeUserProfile
-);
-
 // Update user profile
-router.put(
-  "/profile",
-  authMiddleware,
-  upload.fields([{ name: "image" }, { name: "cv" }]),
-  userController.updateUserProfile
-);
+router.put('/profile', upload.fields([
+  { name: 'cv', maxCount: 1 },
+  { name: 'image', maxCount: 1 }
+]),authMiddleware ,userController.updateUserProfile);
+
 
 // Reset password
 router.post("/reset-password", authMiddleware, userController.resetPassword);

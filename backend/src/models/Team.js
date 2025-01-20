@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const Label = sequelize.define("Label", {
+const Team = sequelize.define("Team", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -11,6 +11,14 @@ const Label = sequelize.define("Label", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  members: {
+    type: DataTypes.ARRAY(DataTypes.INTEGER),
+    allowNull: true,
+  },
+  isDeleted: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
 });
 
-module.exports = Label;
+module.exports = Team;

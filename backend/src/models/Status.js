@@ -1,16 +1,20 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const Permission = sequelize.define("Permission", {
+const Status = sequelize.define("Status", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  name: {
+  status: {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  isDeleted: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
 });
 
-module.exports = Permission;
+module.exports = Status;

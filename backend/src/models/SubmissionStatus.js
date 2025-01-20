@@ -1,23 +1,20 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const Project = require("./Project");
 
-const File = sequelize.define("File", {
+const SubmissionStatus = sequelize.define("SubmissionStatus", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  fileName: {
+  status: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  filePath: {
-    type: DataTypes.STRING,
-    allowNull: false,
+  isDeleted: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
 });
 
-File.belongsTo(Project, { foreignKey: "projectId" });
-
-module.exports = File;
+module.exports = SubmissionStatus;

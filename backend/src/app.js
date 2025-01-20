@@ -9,6 +9,10 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const requestRoutes = require("./routes/requestRoutes");
+const rewardRoutes = require("./routes/rewardRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const teamRoutes = require("./routes/teamRoutes");
+const milestoneRoutes = require("./routes/teamRoutes");
 
 require("dotenv").config();
 
@@ -51,6 +55,10 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/project", projectRoutes);
 app.use("/api/request", requestRoutes);
+app.use("/api/notification", notificationRoutes);
+app.use("/api/reward", rewardRoutes);
+app.use("/api/team", teamRoutes);
+app.use("/api/milestone", milestoneRoutes);
 
 // Base route
 app.get("/", (req, res) => res.send("Bounty Board API is running..."));

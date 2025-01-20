@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const Project = require("./Project");
 
 const Milestone = sequelize.define("Milestone", {
   id: {
@@ -12,31 +11,26 @@ const Milestone = sequelize.define("Milestone", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  status: {
-    type: DataTypes.ENUM("in-progress", "completed", "reassigned"),
-    defaultValue: "in-progress",
-  },
-  approvalStatus: {
-    type: DataTypes.ENUM("pending", "approved", "rejected"),
-    defaultValue: "pending",
-  },
-  rejectionReason: {
-    type: DataTypes.TEXT, // Reason for rejection
+  statusId: {
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
-  suggestion: {
-    type: DataTypes.TEXT, // Instructions for the hunter
+  projectId: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  section: {
+    type: DataTypes.STRING,
     allowNull: true,
   },
-  isFinalMilestone: {
-    type: DataTypes.BOOLEAN,
-    defaultValue: false, // Indicates if this is the last milestone
+  selected: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
-  dueDate: {
-    type: DataTypes.DATE,
-    allowNull: true,
+  isDeleted: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
 });
-
 
 module.exports = Milestone;
