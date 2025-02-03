@@ -53,7 +53,6 @@ const User = sequelize.define("User", {
   techStack: {
     type: DataTypes.ARRAY(DataTypes.STRING), // Use ARRAY for PostgreSQL
     allowNull: true,
-    defaultValue: [], // Default to an empty array
   },
 });
 

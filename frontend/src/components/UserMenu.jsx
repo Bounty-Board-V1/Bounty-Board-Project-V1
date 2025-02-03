@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import {
@@ -10,8 +12,39 @@ import {
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { User, Settings, LogOut } from "lucide-react";
+import { useCustomToast } from "@/hooks/useCustomToast"; // Import toast
+import { useAuth } from "@/context/AuthContext";
 
 export function UserMenu() {
+  const navigate = useNavigate();
+  const { showToast } = useCustomToast(); // Initialize toast
+  const { logout } = useAuth();
+  const handleLogout = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/api/auth/logout", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        showToast("Error", data.message || "Logout failed", "destructive");
+        return;
+      }
+
+      // Clear the token from localStorage
+      logout(data.token);
+      showToast("Success", "Logout successful!", "success");
+      navigate("/login");
+    } catch (error) {
+      showToast("Error", "Server error. Please try again.", "destructive");
+      console.error("Logout error:", error);
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -33,15 +66,19 @@ export function UserMenu() {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <User className="mr-2 h-4 w-4" />
-          <span>Account</span>
+          <Link to="/account" className="flex items-center w-full">
+            <User className="mr-2 h-4 w-4" />
+            <span>Account</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>
-          <Settings className="mr-2 h-4 w-4" />
-          <span>Settings</span>
+          <Link to="/settings" className="flex items-center w-full">
+            <Settings className="mr-2 h-4 w-4" />
+            <span>Settings</span>
+          </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={handleLogout}>
           <LogOut className="mr-2 h-4 w-4" />
           <span>Sign out</span>
         </DropdownMenuItem>
