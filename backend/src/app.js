@@ -1,5 +1,5 @@
 const express = require("express");
-const sequelize = require("./models").sequelize; // Sequelize instance
+const { sequelize } = require("./models"); // Sequelize instance
 const session = require("express-session");
 const passport = require("./config/microsoftAuth");
 const cors = require("cors");
@@ -21,8 +21,7 @@ const app = express();
 // CORS Configuration
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow requests from your frontend URL
-    credentials: true, // Allow credentials (cookies, authorization headers)
+    origin: "*",
   })
 );
 
@@ -46,7 +45,7 @@ sequelize
 
 // Synchronize models
 sequelize
-  .sync({ force: true }) // Use force: true ONLY for development resets
+  .sync({ force: false }) // Use force: true ONLY for development resets
   .then(() => console.log("Database synchronized"))
   .catch((err) => console.error("Error synchronizing database:", err));
 

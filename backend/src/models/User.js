@@ -44,10 +44,6 @@ const User = sequelize.define("User", {
     type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: true,
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
   isDeleted: {
     type: DataTypes.INTEGER,
     defaultValue: 0,

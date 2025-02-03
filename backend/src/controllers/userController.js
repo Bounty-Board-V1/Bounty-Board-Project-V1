@@ -1,6 +1,70 @@
 const { User, Role, Team } = require("../models"); // Ensure Team is included for relationships
 const bcrypt = require("bcrypt");
 
+// User Registration
+const CreateUserProfile = async (req, res) => {
+  try {
+    const { name, email, password, confirmPassword } = req.body;
+
+    // Basic validation
+    if (!name || !email || !password || !confirmPassword) {
+      return res.status(400).json({ message: "All fields are required." });
+    }
+
+    // Email domain validation
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@menadevs\.io$/;
+    if (!emailRegex.test(email)) {
+      return res
+        .status(400)
+        .json({ message: "Email must be a valid @menadevs.io address." });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(409).json({ message: "Email is already in use." });
+    }
+
+    // Password confirmation validation
+    if (password !== confirmPassword) {
+      return res.status(400).json({ message: "Passwords do not match." });
+    }
+
+    // Password strength validation (min 6 chars, 1 uppercase, 1 lowercase, 1 digit)
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d]{6,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message:
+          "Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter.",
+      });
+    }
+
+    // Hash the password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    // Create new user
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+
+    // Response without sending the password
+    res.status(201).json({
+      message: "User registered successfully.",
+      user: {
+        id: newUser.id,
+        name: newUser.name,
+        email: newUser.email,
+      },
+    });
+  } catch (error) {
+    console.error("Registration Error:", error);
+    res.status(500).json({ message: "Server error. Please try again later." });
+  }
+};
+
 // Fetch User Profile
 const getUserProfile = async (req, res) => {
   try {
@@ -89,6 +153,12 @@ const updateUserProfile = async (req, res) => {
 
     // Construct updatedFields object
     const updatedFields = {
+      ...(name && { name }), // Update name if provided
+      ...(secondaryEmail && { secondaryEmail }), // Update secondary email if provided
+      ...(req.files?.cv && { cv: `/uploads/${req.files.cv[0].filename}` }), // Handle CV upload
+      ...(req.files?.image && {
+        image: `/uploads/${req.files.image[0].filename}`,
+      }), // Handle image upload
       ...(name && { name }),
       ...(email && { email }),
       ...(profileCompleted !== undefined && { profileCompleted: profileCompleted === 'true' }), // Convert to boolean
@@ -120,7 +190,6 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
-// Reset Password
 const resetPassword = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmPassword } = req.body;
@@ -131,9 +200,7 @@ const resetPassword = async (req, res) => {
     }
 
     if (newPassword !== confirmPassword) {
-      return res
-        .status(400)
-        .json({ message: "New passwords do not match." });
+      return res.status(400).json({ message: "New passwords do not match." });
     }
 
     // Get the current user (assuming authentication middleware sets req.user)
@@ -143,7 +210,10 @@ const resetPassword = async (req, res) => {
     }
 
     // Verify current password
-    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password
+    );
     if (!isPasswordValid) {
       return res
         .status(401)
@@ -152,9 +222,9 @@ const resetPassword = async (req, res) => {
 
     // Check if the new password is different from the current password
     if (await bcrypt.compare(newPassword, user.password)) {
-      return res
-        .status(400)
-        .json({ message: "New password must be different from the current password." });
+      return res.status(400).json({
+        message: "New password must be different from the current password.",
+      });
     }
 
     // Hash the new password
@@ -171,6 +241,7 @@ const resetPassword = async (req, res) => {
 };
 
 module.exports = {
+  CreateUserProfile,
   getUserProfile,
   completeUserProfile,
   updateUserProfile,

@@ -13,6 +13,8 @@ resetPassword
 } = require("../controllers/userController");
 const router = express.Router();
 
+router.post("/register", userController.CreateUserProfile);
+
 // Get user profile
 router.get("/profile", authMiddleware,getUserProfile);
 // Update user profile

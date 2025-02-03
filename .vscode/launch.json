@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Backend: Debug Express Server",
+      "type": "pwa-node",
+      "request": "launch",
+      "program": "${workspaceFolder}/backend/src/server.js",  // ✅ Path to server
+      "cwd": "${workspaceFolder}/backend",
+      "runtimeArgs": ["--nolazy"],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**"]
+    },
+    {
+      "name": "Frontend: Debug Vite React App",
+      "type": "pwa-chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",  // ✅ Vite runs on port 5173
+      "webRoot": "${workspaceFolder}/frontend/src",
+      "breakOnLoad": true
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full-Stack: Debug Both (Express + Vite)",
+      "configurations": [
+        "Backend: Debug Express Server",
+        "Frontend: Debug Vite React App"
+      ]
+    }
+  ]
+}
