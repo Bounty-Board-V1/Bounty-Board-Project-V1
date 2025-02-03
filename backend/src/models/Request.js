@@ -13,7 +13,7 @@ const Request = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
-    hunterId: {
+    teamId: {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
