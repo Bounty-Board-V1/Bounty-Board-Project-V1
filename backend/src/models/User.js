@@ -7,6 +7,10 @@ const User = sequelize.define("User", {
     primaryKey: true,
     autoIncrement: true,
   },
+  roleId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -15,45 +19,38 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: false,
     unique: true,
-    validate: {
-      isEmail: true,
-    },
   },
-
   secondaryEmail: {
     type: DataTypes.STRING,
     allowNull: true,
-    unique: true,
-    validate: {
-      isEmail: true,
-    },
   },
   password: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  role: {
-    type: DataTypes.ENUM("admin", "poster", "hunter"),
-    allowNull: false,
-    defaultValue: "hunter",
-  },
   image: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  cv: {
+  CV: {
     type: DataTypes.STRING,
     allowNull: true,
   },
   profileCompleted: {
     type: DataTypes.BOOLEAN,
-    defaultValue: false, // By default, the profile is not completed
-    allowNull: false,
+    defaultValue: false,
   },
   techStack: {
-    type: DataTypes.ARRAY(DataTypes.STRING), // Use ARRAY for PostgreSQL
+    type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: true,
-    defaultValue: [], // Default to an empty array
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
+  isDeleted: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
 });
 

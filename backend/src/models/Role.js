@@ -7,13 +7,17 @@ const Role = sequelize.define("Role", {
     primaryKey: true,
     autoIncrement: true,
   },
-  name: {
+  role: {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  permissionId: {
-    type: DataTypes.INTEGER,
+  permission: {
+    type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: true,
+  },
+  isDeleted: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
 });
 

@@ -6,29 +6,23 @@ const authMiddleware = require("../middlewares/authMiddleware");
 const upload = require("../middlewares/uploadMiddleware");
 
 // Controller
-const userController = require("../controllers/userController");
+const {
+  getUserProfile,
+updateUserProfile,
+resetPassword
+} = require("../controllers/userController");
 const router = express.Router();
 
 // Get user profile
-router.get("/profile", authMiddleware, userController.getUserProfile);
-
-// Complete user profile with image and CV upload
-router.post(
-  "/complete-profile",
-  authMiddleware,
-  upload.fields([{ name: "image" }, { name: "cv" }]),
-  userController.completeUserProfile
-);
-
+router.get("/profile", authMiddleware,getUserProfile);
 // Update user profile
-router.put(
-  "/profile",
-  authMiddleware,
-  upload.fields([{ name: "image" }, { name: "cv" }]),
-  userController.updateUserProfile
-);
+router.put('/profile', upload.fields([
+  { name: 'cv', maxCount: 1 },
+  { name: 'image', maxCount: 1 }
+]),authMiddleware ,updateUserProfile);
+
 
 // Reset password
-router.post("/reset-password", authMiddleware, userController.resetPassword);
+router.post("/reset-password", authMiddleware, resetPassword);
 
 module.exports = router;

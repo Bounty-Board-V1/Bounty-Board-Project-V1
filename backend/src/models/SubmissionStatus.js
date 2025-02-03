@@ -1,16 +1,20 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const Label = sequelize.define("Label", {
+const SubmissionStatus = sequelize.define("SubmissionStatus", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
     autoIncrement: true,
   },
-  name: {
+  status: {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  isDeleted: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
 });
 
-module.exports = Label;
+module.exports = SubmissionStatus;

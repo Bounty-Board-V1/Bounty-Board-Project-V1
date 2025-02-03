@@ -1,11 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const milestoneController = require("../controllers/milestoneController");
+const {getAllMilestones,
+    getMilestone,
+    createMilestone,
+    updateMilestone,
+    deleteMilestone
+    
+} = require("../controllers/milestoneController");
+const authMiddleware = require("../middlewares/authMiddleware");
 
-router.get("/", milestoneController.getAllMilestones);
-router.get("/:id", milestoneController.getMilestone);
-router.post("/", milestoneController.createMilestone);
-router.put("/:id", milestoneController.updateMilestone);
-router.delete("/:id", milestoneController.deleteMilestone);
+router.get("/project/:projectId", authMiddleware, getAllMilestones);
+router.get("/:id", authMiddleware, getMilestone);
+router.post("/create", authMiddleware, createMilestone);
+router.put("/:id", authMiddleware, updateMilestone);
+router.delete("/:id", authMiddleware,deleteMilestone);
 
 module.exports = router;
