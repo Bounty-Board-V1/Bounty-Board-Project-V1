@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const Bounty = sequelize.define("Bounty", {
+const Team = sequelize.define("Team", {
   id: {
     type: DataTypes.INTEGER,
     primaryKey: true,
@@ -11,22 +11,14 @@ const Bounty = sequelize.define("Bounty", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  description: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  },
-  posterId: {
-    type: DataTypes.INTEGER,
+  members: {
+    type: DataTypes.ARRAY(DataTypes.INTEGER),
     allowNull: true,
   },
-  hunterId: {
+  isDeleted: {
     type: DataTypes.INTEGER,
-    allowNull: true,
-  },
-  labelId: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
+    defaultValue: 0,
   },
 });
 
-module.exports = Bounty;
+module.exports = Team;

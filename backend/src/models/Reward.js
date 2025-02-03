@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
-const Project = require("./Project");
 
 const Reward = sequelize.define("Reward", {
   id: {
@@ -9,15 +8,17 @@ const Reward = sequelize.define("Reward", {
     autoIncrement: true,
   },
   amount: {
-    type: DataTypes.DECIMAL(10, 2),
+    type: DataTypes.INTEGER,
     allowNull: false,
   },
   currency: {
     type: DataTypes.STRING,
-    defaultValue: "USD",
+    allowNull: true,
+  },
+  isDeleted: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
 });
-
-Reward.belongsTo(Project, { foreignKey: "projectId" });
 
 module.exports = Reward;

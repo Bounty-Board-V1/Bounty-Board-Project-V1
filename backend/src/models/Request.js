@@ -1,24 +1,39 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const Request = sequelize.define("Request", {
-  id: {
-    type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+const Request = sequelize.define(
+  "Request",
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    name: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    hunterId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    posterId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    projectId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    isDeleted: {
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: false, // Default value for soft deletion
+    },
   },
-  name: {
-    type: DataTypes.STRING,
-    allowNull: false,
-  },
-  userId: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-  },
-  bountyId: {
-    type: DataTypes.INTEGER,
-    allowNull: true,
-  },
-});
-
+  {
+    timestamps: true, // Automatically add createdAt and updatedAt
+    paranoid: true, // Enable soft delete, adds deletedAt field
+  }
+);
 module.exports = Request;

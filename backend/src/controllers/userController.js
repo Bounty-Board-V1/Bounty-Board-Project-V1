@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User, Role, Team } = require("../models"); // Ensure Team is included for relationships
 const bcrypt = require("bcrypt");
 
 // User Registration
@@ -64,6 +64,7 @@ const CreateUserProfile = async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
+
 // Fetch User Profile
 const getUserProfile = async (req, res) => {
   try {
@@ -72,11 +73,20 @@ const getUserProfile = async (req, res) => {
         "id",
         "name",
         "email",
-        "role",
+        "roleId",
         "image",
-        "cv",
         "profileCompleted",
         "techStack",
+      ],
+      include: [
+        {
+          model: Role,
+          attributes: ["id", "role"],
+        },
+        {
+          model: Team,
+          attributes: ["id", "name"], // Include team info if applicable
+        },
       ],
     });
 
@@ -92,7 +102,7 @@ const getUserProfile = async (req, res) => {
 // Complete User Profile
 const completeUserProfile = async (req, res) => {
   try {
-    const { password } = req.body;
+    const { password, techStack } = req.body;
 
     if (!password) {
       return res.status(400).json({ message: "Password is required." });
@@ -109,7 +119,13 @@ const completeUserProfile = async (req, res) => {
 
     // Update user profile
     await User.update(
-      { password: hashedPassword, image, cv, profileCompleted: true },
+      {
+        password: hashedPassword,
+        image,
+        cv,
+        techStack,
+        profileCompleted: true,
+      },
       { where: { id: req.user.id } }
     );
 
@@ -123,9 +139,19 @@ const completeUserProfile = async (req, res) => {
 // Update User Profile
 const updateUserProfile = async (req, res) => {
   try {
-    const { name, secondaryEmail } = req.body;
+    const { name, email, profileCompleted, techStack } = req.body;
 
-    // Prepare updated fields
+    // Parse techStack (if provided) from a JSON string
+    let parsedTechStack = [];
+    if (techStack) {
+      try {
+        parsedTechStack = JSON.parse(techStack); // Parse array from JSON string
+      } catch (err) {
+        return res.status(400).json({ error: 'Invalid format for techStack.' });
+      }
+    }
+
+    // Construct updatedFields object
     const updatedFields = {
       ...(name && { name }), // Update name if provided
       ...(secondaryEmail && { secondaryEmail }), // Update secondary email if provided
@@ -133,26 +159,34 @@ const updateUserProfile = async (req, res) => {
       ...(req.files?.image && {
         image: `/uploads/${req.files.image[0].filename}`,
       }), // Handle image upload
+      ...(name && { name }),
+      ...(email && { email }),
+      ...(profileCompleted !== undefined && { profileCompleted: profileCompleted === 'true' }), // Convert to boolean
+      ...(parsedTechStack.length > 0 && { techStack: parsedTechStack }),
     };
 
-    // Ensure there are fields to update
-    if (Object.keys(updatedFields).length === 0) {
-      return res.status(400).json({ message: "No fields to update." });
+    // Handle file uploads
+    if (req.files) {
+      if (req.files.cv && req.files.cv[0]) {
+        updatedFields.cv = req.files.cv[0].path; // Save CV file path
+      }
+      if (req.files.image && req.files.image[0]) {
+        updatedFields.image = req.files.image[0].path; // Save image file path
+      }
     }
 
-    // Update user profile in the database
-    const [updated] = await User.update(updatedFields, {
-      where: { id: req.user.id }, // Assuming `req.user.id` contains the authenticated user's ID
-    });
+    // Update user in the database
+    const userId = req.user.id; // Assuming the user ID is retrieved from authentication
+    const [updated] = await User.update(updatedFields, { where: { id: userId } });
 
     if (!updated) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ error: 'User not found.' });
     }
 
-    res.json({ message: "Profile updated successfully!" });
+    return res.status(200).json({ message: 'Profile updated successfully.' });
   } catch (error) {
-    console.error("Error updating profile:", error);
-    res.status(500).json({ message: "Internal server error" });
+    console.error('Error updating profile:', error);
+    return res.status(500).json({ error: 'An error occurred while updating the profile.' });
   }
 };
 

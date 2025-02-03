@@ -1,7 +1,6 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-
 const Project = sequelize.define("Project", {
   id: {
     type: DataTypes.INTEGER,
@@ -13,33 +12,44 @@ const Project = sequelize.define("Project", {
     allowNull: false,
   },
   description: {
-    type: DataTypes.TEXT,
-    allowNull: false,
-  },
-  status: {
-    type: DataTypes.ENUM("open", "in-progress", "completed", "closed"),
-    defaultValue: "open",
-  },
-  milestoneType: {
-    type: DataTypes.ENUM("single", "multiple"),
-    allowNull: false,
-    defaultValue: "single",
-  },
-  submissionStatus: {
-    type: DataTypes.ENUM("not-submitted", "submitted", "approved", "rejected"),
-    defaultValue: "not-submitted",
-  },
-  estimatedTime: {
     type: DataTypes.STRING,
+    allowNull: true,
+  },
+  posterId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  statusId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  rewardAmount: {
+    type: DataTypes.INTEGER,
     allowNull: true,
   },
   techStack: {
     type: DataTypes.STRING,
     allowNull: true,
   },
-  rewardAmount: {
-    type: DataTypes.DECIMAL(10, 2),
-    allowNull: false,
+  estimatedTime: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  teamId: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+  },
+  timeline: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW,
+  },
+  isDeleted: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
   },
 });
 
