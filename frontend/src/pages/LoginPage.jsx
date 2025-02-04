@@ -43,8 +43,9 @@ const LoginPage = () => {
 
       const decoded = JSON.parse(atob(data.token.split(".")[1]));
       console.log("Decoded Token:", decoded);
-
-      if (decoded.role !== "admin") {
+      
+      
+      if (decoded.role !== "Admin") {
         showToast("Success", "User login successful!", "success");
         console.log("Navigating to /...");
         navigate("/");

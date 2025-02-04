@@ -1,4 +1,4 @@
-const { User } = require("../models");
+const { User,Role } = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const JWT_EXPIRES_IN = "1h";
@@ -49,14 +49,20 @@ const loginUser = async (req, res) => {
         .json({ message: "Email and password are required." });
     }
 
-    // Find user by email
-    const user = await User.findOne({ where: { email } });
+    // Find user by email and include the Role model
+    const user = await User.findOne({
+      where: { email },
+      include: {
+        model: Role,
+        attributes: ["role"], // Fetch only the role name
+      },
+    });
 
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
-    // Compare passwords (await is required)
+    // Compare passwords
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
@@ -69,10 +75,10 @@ const loginUser = async (req, res) => {
         id: user.id,
         email: user.email,
         name: user.name,
-        role: user.role,
+        role: user.Role.role, // Get role name instead of roleId
       },
       process.env.JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
+      { expiresIn: process.env.JWT_EXPIRES_IN || "1h" }
     );
 
     // Send token in response
@@ -83,7 +89,7 @@ const loginUser = async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        role: user.Role.role, // Return role name
       },
     });
   } catch (error) {
@@ -91,6 +97,7 @@ const loginUser = async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
+
 
 const logout = (req, res) => {
   try {

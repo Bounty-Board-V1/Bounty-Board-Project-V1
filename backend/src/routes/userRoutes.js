@@ -4,15 +4,14 @@ const authMiddleware = require("../middlewares/authMiddleware");
 const upload = require("../middlewares/uploadMiddleware");
 
 // Controller
-const {
-  CreateUserProfile,
+const {createUserProfile,
   getUserProfile,
   updateUserProfile,
   resetPassword,
 } = require("../controllers/userController");
 const router = express.Router();
 
-router.post("/register", CreateUserProfile);
+router.post("/register", createUserProfile);
 
 // Get user profile
 router.get("/profile", authMiddleware, getUserProfile);
