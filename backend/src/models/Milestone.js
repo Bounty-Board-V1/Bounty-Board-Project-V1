@@ -19,10 +19,10 @@ const Milestone = sequelize.define("Milestone", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
-  section: {
-    type: DataTypes.STRING,
-    allowNull: true,
-  },
+  // section: {
+  //   type: DataTypes.STRING,
+  //   allowNull: true,
+  // },
   selected: {
     type: DataTypes.INTEGER,
     defaultValue: 0,

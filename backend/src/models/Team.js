@@ -11,10 +11,6 @@ const Team = sequelize.define("Team", {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  members: {
-    type: DataTypes.ARRAY(DataTypes.INTEGER),
-    allowNull: true,
-  },
   isDeleted: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
