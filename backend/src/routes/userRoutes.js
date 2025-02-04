@@ -6,14 +6,14 @@ const authMiddleware = require("../middlewares/authMiddleware");
 const upload = require("../middlewares/uploadMiddleware");
 
 // Controller
-const {
+const {createUserProfile,
   getUserProfile,
 updateUserProfile,
 resetPassword
 } = require("../controllers/userController");
 const router = express.Router();
 
-router.post("/register", userController.CreateUserProfile);
+router.post("/register", createUserProfile);
 
 // Get user profile
 router.get("/profile", authMiddleware,getUserProfile);
