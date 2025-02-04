@@ -45,7 +45,7 @@ sequelize
 
 // Synchronize models
 sequelize
-  .sync({ force: false }) // Use force: true ONLY for development resets
+  .sync({ force: true }) // Use force: true ONLY for development resets
   .then(() => console.log("Database synchronized"))
   .catch((err) => console.error("Error synchronizing database:", err));
 

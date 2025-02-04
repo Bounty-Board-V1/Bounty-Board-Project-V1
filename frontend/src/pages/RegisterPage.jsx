@@ -61,7 +61,6 @@ const RegisterPage = () => {
         "Registration failed. Please try again.",
         "destructive"
       );
-      console.error("Registration error:", error);
     }
   };
 

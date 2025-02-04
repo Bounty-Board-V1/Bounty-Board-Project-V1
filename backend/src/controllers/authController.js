@@ -2,41 +2,41 @@ const { User } = require("../models");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const JWT_EXPIRES_IN = "1h";
-const microsoftCallback = async (req, res) => {
-  try {
-    const { email, name } = req.user;
+// const microsoftCallback = async (req, res) => {
+//   try {
+//     const { email, name } = req.user;
 
-    // Check if the user already exists in the database
-    let user = await User.findOne({ where: { email } });
+//     // Check if the user already exists in the database
+//     let user = await User.findOne({ where: { email } });
 
-    if (!user) {
-      // User is new, create a record with incomplete profile
-      user = await User.create({
-        name,
-        email,
-        password: null, // OAuth users will set the password later
-        profileCompleted: false,
-      });
-    }
+//     if (!user) {
+//       // User is new, create a record with incomplete profile
+//       user = await User.create({
+//         name,
+//         email,
+//         password: null, // OAuth users will set the password later
+//         profileCompleted: false,
+//       });
+//     }
 
-    // Generate JWT Token
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN }
-    );
+//     // Generate JWT Token
+//     const token = jwt.sign(
+//       { id: user.id, email: user.email },
+//       process.env.JWT_SECRET,
+//       { expiresIn: JWT_EXPIRES_IN }
+//     );
 
-    // Redirect based on profile completion status
-    if (!user.profileCompleted) {
-      return res.redirect(`http://localhost:5173/account?token=${token}`);
-    }
+//     // Redirect based on profile completion status
+//     if (!user.profileCompleted) {
+//       return res.redirect(`http://localhost:5173/account?token=${token}`);
+//     }
 
-    res.redirect(`http://localhost:5173/account?token=${token}`);
-  } catch (error) {
-    console.error("Error handling OAuth callback:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
-};
+//     res.redirect(`http://localhost:5173/account?token=${token}`);
+//   } catch (error) {
+//     console.error("Error handling OAuth callback:", error);
+//     res.status(500).json({ message: "Internal server error" });
+//   }
+// };
 
 const loginUser = async (req, res) => {
   try {
@@ -83,6 +83,7 @@ const loginUser = async (req, res) => {
         id: user.id,
         name: user.name,
         email: user.email,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -101,4 +102,4 @@ const logout = (req, res) => {
   }
 };
 
-module.exports = { microsoftCallback, logout, loginUser };
+module.exports = { logout, loginUser };

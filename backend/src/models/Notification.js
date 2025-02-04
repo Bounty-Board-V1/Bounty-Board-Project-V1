@@ -1,4 +1,6 @@
 const { DataTypes } = require("sequelize");
+const sequelize = require("../config/database");
+
 const Notification = sequelize.define("Notification", {
   id: {
     type: DataTypes.INTEGER,
@@ -30,6 +32,5 @@ const Notification = sequelize.define("Notification", {
     defaultValue: false, // Tracks if the notification is read
   },
 });
-
 
 module.exports = Notification;

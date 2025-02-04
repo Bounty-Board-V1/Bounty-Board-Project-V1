@@ -12,7 +12,7 @@ const Team = require("./Team");
 
 // Relationships
 User.belongsTo(Role, { foreignKey: "roleId" }); // User belongs to Role
-Role.hasMany(User, { foreignKey: "roleId" }); // Role has many Users
+Role.hasMany(User, { foreignKey: "userId" }); // Role has many Users
 
 User.hasMany(Project, { foreignKey: "posterId", as: "postedProjects" }); // User (poster) creates projects
 User.hasMany(Project, { foreignKey: "hunterId", as: "assignedProjects" }); // User (hunter) is assigned projects
