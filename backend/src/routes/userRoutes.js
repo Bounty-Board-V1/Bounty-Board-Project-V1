@@ -1,6 +1,4 @@
 const express = require("express");
-const { User } = require("../models"); // Sequelize User model
-
 // Middlewares
 const authMiddleware = require("../middlewares/authMiddleware");
 const upload = require("../middlewares/uploadMiddleware");
@@ -8,21 +6,25 @@ const upload = require("../middlewares/uploadMiddleware");
 // Controller
 const {createUserProfile,
   getUserProfile,
-updateUserProfile,
-resetPassword
+  updateUserProfile,
+  resetPassword,
 } = require("../controllers/userController");
 const router = express.Router();
 
 router.post("/register", createUserProfile);
 
 // Get user profile
-router.get("/profile", authMiddleware,getUserProfile);
+router.get("/profile", authMiddleware, getUserProfile);
 // Update user profile
-router.put('/profile', upload.fields([
-  { name: 'cv', maxCount: 1 },
-  { name: 'image', maxCount: 1 }
-]),authMiddleware ,updateUserProfile);
-
+router.put(
+  "/profile",
+  upload.fields([
+    { name: "cv", maxCount: 1 },
+    { name: "image", maxCount: 1 },
+  ]),
+  authMiddleware,
+  updateUserProfile
+);
 
 // Reset password
 router.post("/reset-password", authMiddleware, resetPassword);

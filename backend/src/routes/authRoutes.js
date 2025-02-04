@@ -1,12 +1,6 @@
 const express = require("express");
-const passport = require("../config/microsoftAuth");
-const {
-  logout,
-  microsoftCallback,
-  loginUser,
-} = require("../controllers/authController");
-const authMiddleware = require("../middlewares/authMiddleware");
-const verifyAdminMiddleware = require("../middlewares/verifyAdminMiddleware");
+// const passport = require("../config/microsoftAuth");
+const { logout, loginUser } = require("../controllers/authController");
 
 const router = express.Router();
 

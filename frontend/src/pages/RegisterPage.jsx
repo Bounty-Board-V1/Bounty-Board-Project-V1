@@ -62,7 +62,6 @@ console.log(response);
         "Registration failed. Please try again.",
         "destructive"
       );
-      console.error("Registration error:", error);
     }
   };
 
