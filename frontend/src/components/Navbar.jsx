@@ -1,10 +1,9 @@
-/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import { UserMenu } from "./UserMenu";
 import { Button } from "@/components/ui/button";
-import { Menu } from "lucide-react";
+import { Menu, PlusCircle } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -13,9 +12,11 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
+import { useAuth } from "@/context/AuthContext";
 
-// Add a prop to determine if the user is a Poster
-export function Navbar({ isPoster = false }) {
+export function Navbar() {
+  const { user } = useAuth(); // Fetch authenticated user data
+  const isPoster = user?.role === "Poster"; // Check if the user is a Poster
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -23,13 +24,11 @@ export function Navbar({ isPoster = false }) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex items-center">
-            {/* Logo */}
             <Link to="/" className="flex-shrink-0 flex items-center">
               <span className="text-2xl font-bold text-gray-800">
                 BountyBoard
               </span>
             </Link>
-            {/* Navigation Links (hidden on mobile) */}
             <div className="hidden md:ml-6 md:flex md:space-x-8">
               <NavigationMenu>
                 <NavigationMenuList>
@@ -52,23 +51,6 @@ export function Navbar({ isPoster = false }) {
                             </Link>
                           </NavigationMenuLink>
                         </li>
-                        {isPoster && (
-                          <li>
-                            <NavigationMenuLink asChild>
-                              <Link
-                                className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
-                                to="/create-project"
-                              >
-                                <div className="text-sm font-medium leading-none">
-                                  Create Project
-                                </div>
-                                <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                                  Start a new project and find collaborators
-                                </p>
-                              </Link>
-                            </NavigationMenuLink>
-                          </li>
-                        )}
                         <li>
                           <NavigationMenuLink asChild>
                             <Link
@@ -108,11 +90,17 @@ export function Navbar({ isPoster = false }) {
             </div>
           </div>
           <div className="flex items-center">
-            {/* User Menu */}
+            {isPoster && (
+              <Link to="/create-project">
+                <Button variant="outline" size="sm" className="mr-4">
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Create Project
+                </Button>
+              </Link>
+            )}
             <div className="ml-4 flex items-center">
               <UserMenu />
             </div>
-            {/* Mobile menu button */}
             <div className="ml-2 -mr-2 flex items-center md:hidden">
               <Button
                 variant="ghost"
@@ -127,7 +115,6 @@ export function Navbar({ isPoster = false }) {
         </div>
       </div>
 
-      {/* Mobile menu, show/hide based on menu state */}
       <div className={`md:hidden ${isMenuOpen ? "block" : "hidden"}`}>
         <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <MobileNavLink to="/">Home</MobileNavLink>
@@ -135,22 +122,14 @@ export function Navbar({ isPoster = false }) {
           {isPoster && (
             <MobileNavLink to="/create-project">Create Project</MobileNavLink>
           )}
+          {isPoster && (
+            <MobileNavLink to="/create-post">Create Post</MobileNavLink>
+          )}
           <MobileNavLink to="/search">Search Projects</MobileNavLink>
           <MobileNavLink to="/team-management">Team Management</MobileNavLink>
         </div>
       </div>
     </nav>
-  );
-}
-
-function NavLink({ to, children }) {
-  return (
-    <Link
-      to={to}
-      className="text-gray-500 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium"
-    >
-      {children}
-    </Link>
   );
 }
 

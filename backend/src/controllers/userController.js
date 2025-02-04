@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const createUserProfile = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
-    const roleId = req.body.roleId || 3;
+    const roleId = req.body.roleId || 2;
 
     // Basic validation
     if (!name || !email || !password || !confirmPassword) {
@@ -75,7 +75,6 @@ const createUserProfile = async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
-
 
 // Fetch User Profile
 const getUserProfile = async (req, res) => {
@@ -159,7 +158,7 @@ const updateUserProfile = async (req, res) => {
       try {
         parsedTechStack = JSON.parse(techStack); // Parse array from JSON string
       } catch (err) {
-        return res.status(400).json({ error: 'Invalid format for techStack.' });
+        return res.status(400).json({ error: "Invalid format for techStack." });
       }
     }
 
@@ -173,7 +172,9 @@ const updateUserProfile = async (req, res) => {
       }), // Handle image upload
       ...(name && { name }),
       ...(email && { email }),
-      ...(profileCompleted !== undefined && { profileCompleted: profileCompleted === 'true' }), // Convert to boolean
+      ...(profileCompleted !== undefined && {
+        profileCompleted: profileCompleted === "true",
+      }), // Convert to boolean
       ...(parsedTechStack.length > 0 && { techStack: parsedTechStack }),
     };
 
@@ -189,16 +190,20 @@ const updateUserProfile = async (req, res) => {
 
     // Update user in the database
     const userId = req.user.id; // Assuming the user ID is retrieved from authentication
-    const [updated] = await User.update(updatedFields, { where: { id: userId } });
+    const [updated] = await User.update(updatedFields, {
+      where: { id: userId },
+    });
 
     if (!updated) {
-      return res.status(404).json({ error: 'User not found.' });
+      return res.status(404).json({ error: "User not found." });
     }
 
-    return res.status(200).json({ message: 'Profile updated successfully.' });
+    return res.status(200).json({ message: "Profile updated successfully." });
   } catch (error) {
-    console.error('Error updating profile:', error);
-    return res.status(500).json({ error: 'An error occurred while updating the profile.' });
+    console.error("Error updating profile:", error);
+    return res
+      .status(500)
+      .json({ error: "An error occurred while updating the profile." });
   }
 };
 

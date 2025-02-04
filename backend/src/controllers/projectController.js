@@ -46,27 +46,31 @@ const getProject = async (req, res) => {
 // Create a new project
 const createProject = async (req, res) => {
   try {
-    const { title, description, teamId, rewardAmount, techStack, estimatedTime, timeline } = req.body;
-    const posterId = req.user.id; // Assuming the token middleware adds the user ID to req.user
+    console.log(req.body);
 
-    // Ensure team exists and is not deleted
-    const team = await Team.findByPk(teamId);
-    if (!team || team.isDeleted) {
-      return res.status(404).json({ error: "Team not found or deleted" });
-    }
+    const {
+      title,
+      description,
+      rewardAmount,
+      techStack,
+      estimatedTime,
+      timeline,
+    } = req.body;
+    const posterId = req.user.id; // Assuming the token middleware adds the user ID to req.user
 
     const newProject = await Project.create({
       title,
       description,
       posterId,
-      teamId,
       rewardAmount,
       techStack,
       estimatedTime,
       timeline,
     });
 
-    res.status(201).json({ project: newProject, message: "Project created successfully!" });
+    res
+      .status(201)
+      .json({ project: newProject, message: "Project created successfully!" });
   } catch (error) {
     res.status(500).json({ error: "Failed to create the project" });
   }
@@ -75,7 +79,14 @@ const createProject = async (req, res) => {
 // Update a project by ID
 const updateProject = async (req, res) => {
   try {
-    const { title, description, teamId, rewardAmount, techStack, estimatedTime, timeline } = req.body;
+    const {
+      title,
+      description,
+      rewardAmount,
+      techStack,
+      estimatedTime,
+      timeline,
+    } = req.body;
 
     const project = await Project.findByPk(req.params.id);
     if (!project) {
@@ -133,7 +144,9 @@ const approveProject = async (req, res) => {
     // Ensure the project has an assigned team
     const team = await Team.findByPk(project.teamId);
     if (!team || team.isDeleted) {
-      return res.status(400).json({ error: "Project is not assigned to a valid team" });
+      return res
+        .status(400)
+        .json({ error: "Project is not assigned to a valid team" });
     }
 
     // Update project status to "in-progress"
@@ -144,7 +157,7 @@ const approveProject = async (req, res) => {
     if (project.rewardAmount) {
       await Reward.create({
         amount: project.rewardAmount,
-        currency: 'USD', // You can modify this if needed
+        currency: "USD", // You can modify this if needed
       });
     }
 
