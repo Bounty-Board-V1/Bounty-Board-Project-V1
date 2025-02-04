@@ -11,8 +11,8 @@ const ProtectedAdminLayout = () => {
     return <p>Loading...</p>;
   }
 
-  if (user?.role !== "admin") {
-    console.warn("Access denied: Not an admin");
+  if (user?.role !== "Admin") {
+    console.warn("Access denied: Not an Admin");
     return <Navigate to="/" replace />;
   }
 

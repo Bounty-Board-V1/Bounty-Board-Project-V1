@@ -2,9 +2,10 @@ const { User, Role, Team } = require("../models"); // Ensure Team is included fo
 const bcrypt = require("bcrypt");
 
 // User Registration
-const CreateUserProfile = async (req, res) => {
+const createUserProfile = async (req, res) => {
   try {
     const { name, email, password, confirmPassword } = req.body;
+    const roleId = req.body.roleId || 3;
 
     // Basic validation
     if (!name || !email || !password || !confirmPassword) {
@@ -35,7 +36,7 @@ const CreateUserProfile = async (req, res) => {
     if (!passwordRegex.test(password)) {
       return res.status(400).json({
         message:
-          "Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter.",
+          "Password must be at least 6 characters long, contain at least one uppercase letter, one lowercase letter, and one digit.",
       });
     }
 
@@ -48,15 +49,25 @@ const CreateUserProfile = async (req, res) => {
       name,
       email,
       password: hashedPassword,
+      roleId,
+    });
+
+    // Fetch user with role details
+    const userWithRole = await User.findByPk(newUser.id, {
+      include: {
+        model: Role,
+        attributes: ["role"], // Fetch only the role name
+      },
     });
 
     // Response without sending the password
     res.status(201).json({
       message: "User registered successfully.",
       user: {
-        id: newUser.id,
-        name: newUser.name,
-        email: newUser.email,
+        id: userWithRole.id,
+        name: userWithRole.name,
+        email: userWithRole.email,
+        role: userWithRole.Role.role, // Return role name instead of roleId
       },
     });
   } catch (error) {
@@ -64,6 +75,7 @@ const CreateUserProfile = async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 };
+
 
 // Fetch User Profile
 const getUserProfile = async (req, res) => {
@@ -241,7 +253,7 @@ const resetPassword = async (req, res) => {
 };
 
 module.exports = {
-  CreateUserProfile,
+  createUserProfile,
   getUserProfile,
   completeUserProfile,
   updateUserProfile,
