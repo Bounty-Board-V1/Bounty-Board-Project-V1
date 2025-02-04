@@ -9,7 +9,6 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const projectRoutes = require("./routes/projectRoutes");
 const requestRoutes = require("./routes/requestRoutes");
-const rewardRoutes = require("./routes/rewardRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const teamRoutes = require("./routes/teamRoutes");
 const milestoneRoutes = require("./routes/teamRoutes");
@@ -45,7 +44,7 @@ sequelize
 
 // Synchronize models
 sequelize
-  .sync({ force: true }) // Use force: true ONLY for development resets
+  .sync({ force: false }) // Use force: true ONLY for development resets
   .then(() => console.log("Database synchronized"))
   .catch((err) => console.error("Error synchronizing database:", err));
 
@@ -55,7 +54,6 @@ app.use("/api/user", userRoutes);
 app.use("/api/project", projectRoutes);
 app.use("/api/request", requestRoutes);
 app.use("/api/notification", notificationRoutes);
-app.use("/api/reward", rewardRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/milestone", milestoneRoutes);
 
