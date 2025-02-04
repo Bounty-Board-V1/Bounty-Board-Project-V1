@@ -43,10 +43,6 @@ const Project = sequelize.define("Project", {
     type: DataTypes.DATE,
     allowNull: true,
   },
-  createdAt: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW,
-  },
   isDeleted: {
     type: DataTypes.INTEGER,
     defaultValue: 0,
