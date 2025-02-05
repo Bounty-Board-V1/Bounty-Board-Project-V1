@@ -19,7 +19,6 @@ import Dashboard from "./pages/admin/features/dashboard/Dashboard";
 import Users from "./pages/admin/features/users/Users";
 import Projects from "./pages/admin/features/projects/Projects";
 import Settings from "./pages/admin/features/settings/Settings";
-import Layout from "./pages/admin/components/Layout";
 import TeamManagementPage from "./pages/TeamManagementPage";
 
 function App() {

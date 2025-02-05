@@ -59,12 +59,6 @@ Project.belongsTo(Team, { foreignKey: "approvedTeamId", as: "approvedTeam" });
 Team.hasOne(Project, { foreignKey: "approvedTeamId", as: "assignedProject" });
 
 // ----------------------
-// Project-Status Relationship
-// ----------------------
-Project.belongsTo(Status, { foreignKey: "statusId" });
-Status.hasMany(Project, { foreignKey: "statusId" });
-
-// ----------------------
 // Project-Milestone Relationship
 // ----------------------
 Project.hasMany(Milestone, { foreignKey: "projectId" });
