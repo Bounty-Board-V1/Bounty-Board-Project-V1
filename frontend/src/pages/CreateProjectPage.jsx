@@ -20,6 +20,36 @@ import { Badge } from "@/components/ui/badge";
 import { X } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
+const techOptions = [
+  "JavaScript",
+  "Python",
+  "Java",
+  "C#",
+  "C++",
+  "PHP",
+  "Ruby",
+  "Swift",
+  "Go",
+  "Kotlin",
+  "TypeScript",
+  "React",
+  "Angular",
+  "Vue.js",
+  "Node.js",
+  "Django",
+  "Flask",
+  "Spring Boot",
+  "Express.js",
+  "Laravel",
+  "Ruby on Rails",
+  "TensorFlow",
+  "PyTorch",
+  "MongoDB",
+  "PostgreSQL",
+  "MySQL",
+  "Firebase",
+];
+
 const CreateProject = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("basic");
@@ -50,11 +80,12 @@ const CreateProject = () => {
     }));
   };
 
-  const handleTechStackAdd = (tech) => {
-    if (tech && !formData.techStack.includes(tech)) {
+  const handleTechStackAdd = (e) => {
+    const selectedTech = e.target.value;
+    if (selectedTech && !formData.techStack.includes(selectedTech)) {
       setFormData((prevState) => ({
         ...prevState,
-        techStack: [...prevState.techStack, tech],
+        techStack: [...prevState.techStack, selectedTech],
       }));
     }
   };
@@ -68,16 +99,16 @@ const CreateProject = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-console.log(JSON.stringify(formData));
+    console.log(JSON.stringify(formData));
 
     try {
-      const token = localStorage.getItem("token"); // Ensure your AuthContext provides the token
+      const token = localStorage.getItem("token");
 
       const response = await fetch("http://localhost:5000/api/project/create", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // Add the token here
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(formData),
       });
@@ -175,36 +206,25 @@ console.log(JSON.stringify(formData));
                         </Badge>
                       ))}
                     </div>
-                    <div className="flex gap-2">
-                      <Input
-                        id="techStack"
-                        placeholder="Add technology"
-                        onKeyPress={(e) => {
-                          if (e.key === "Enter") {
-                            e.preventDefault();
-                            handleTechStackAdd(e.target.value);
-                            e.target.value = "";
-                          }
-                        }}
-                      />
-                      <Button
-                        type="button"
-                        onClick={() => {
-                          const input = document.getElementById("techStack");
-                          handleTechStackAdd(input.value);
-                          input.value = "";
-                        }}
-                      >
-                        Add
-                      </Button>
-                    </div>
+                    <select
+                      id="techStack"
+                      className="border p-2 rounded w-full"
+                      onChange={handleTechStackAdd}
+                    >
+                      <option value="">Select technology...</option>
+                      {techOptions.map((tech) => (
+                        <option key={tech} value={tech}>
+                          {tech}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                 </div>
               </TabsContent>
               <TabsContent value="timeline">
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="timeline">Project Timeline</Label>
+                    <Label htmlFor="timeline">Starting Date</Label>
                     <DatePicker
                       id="timeline"
                       selected={formData.timeline}
@@ -212,7 +232,7 @@ console.log(JSON.stringify(formData));
                     />
                   </div>
                   <div>
-                    <Label htmlFor="estimatedTime">Estimated Time</Label>
+                    <Label htmlFor="estimatedTime">Deadline</Label>
                     <Input
                       id="estimatedTime"
                       name="estimatedTime"
@@ -242,17 +262,7 @@ console.log(JSON.stringify(formData));
               Previous
             </Button>
             {activeTab !== "timeline" ? (
-              <Button
-                onClick={() => {
-                  const tabs = ["basic", "details", "timeline"];
-                  const currentIndex = tabs.indexOf(activeTab);
-                  if (currentIndex < tabs.length - 1) {
-                    setActiveTab(tabs[currentIndex + 1]);
-                  }
-                }}
-              >
-                Next
-              </Button>
+              <Button onClick={() => setActiveTab("timeline")}>Next</Button>
             ) : (
               <Button type="submit" onClick={handleSubmit}>
                 Create Project

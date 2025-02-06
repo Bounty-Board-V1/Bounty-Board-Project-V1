@@ -1,7 +1,7 @@
 const { Project, Team, Reward } = require("../models");
 
 // Get all projects
-const getAllProjects = async (req, res) => {
+const getAllProjectsOfPoster = async (req, res) => {
   try {
     const posterId = req.user.id; // Extract posterId from authenticated user
     const projects = await Project.findAll({ where: { posterId } });
@@ -12,7 +12,16 @@ const getAllProjects = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch projects" });
   }
 };
+const getAllProjects = async (req, res) => {
+  try {
+    const projects = await Project.findAll();
 
+    res.status(200).json(projects);
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    res.status(500).json({ error: "Failed to fetch projects" });
+  }
+};
 
 // Get a single project by ID
 const getProject = async (req, res) => {
@@ -166,6 +175,7 @@ const approveProject = async (req, res) => {
 };
 
 module.exports = {
+  getAllProjectsOfPoster,
   getAllProjects,
   getProject,
   createProject,

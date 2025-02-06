@@ -30,7 +30,7 @@ function MyProjectsPage() {
     const fetchProjects = async () => {
       try {
         const token = localStorage.getItem("token");
-        const response = await fetch("http://localhost:5000/api/project", {
+        const response = await fetch("http://localhost:5000/api/project/poster", {
           method: "GET",
           headers: {
             Authorization: `Bearer ${token}`, // Add the token here

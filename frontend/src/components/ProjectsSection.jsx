@@ -1,76 +1,37 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ProjectSlider from "./ProjectSlider";
 
-const projects = [
-  {
-    id: 1,
-    title: "E-commerce Platform",
-    description:
-      "A full-featured online store with product management, shopping cart, and secure checkout process. Integrates with various payment gateways and shipping providers for a seamless shopping experience.",
-    estimatedTime: "3 months",
-    teamSize: 5,
-    techStack: ["React", "Node.js", "MongoDB", "Redux", "Express"],
-    paymentPrice: 15000,
-    status: "In Progress",
-    posterName: "John Doe",
-    milestones: [
-      { id: 1, name: "Project Setup and Design", status: "Completed" },
-      { id: 2, name: "Backend Development", status: "In Progress" },
-      { id: 3, name: "Frontend Development", status: "Not Started" },
-      { id: 4, name: "Testing and Deployment", status: "Not Started" },
-    ],
-  },
-  {
-    id: 2,
-    title: "Task Management App",
-    description:
-      "A comprehensive task management solution with features like task creation, assignment, due dates, priority levels, and progress tracking. Includes team collaboration tools and reporting capabilities.",
-    estimatedTime: "2 months",
-    teamSize: 3,
-    techStack: ["Vue.js", "Express", "PostgreSQL", "Vuex", "Socket.io"],
-    paymentPrice: 8000,
-    status: "Completed",
-    posterName: "Jane Smith",
-    milestones: [{ id: 1, name: "Full Project Cycle", status: "Completed" }],
-  },
-  {
-    id: 3,
-    title: "Social Media Dashboard",
-    description:
-      "An all-in-one dashboard for managing multiple social media accounts. Provides analytics, content scheduling, and engagement tracking across various platforms.",
-    estimatedTime: "1 month",
-    teamSize: 2,
-    techStack: ["React", "Python", "MySQL", "Flask", "Pandas"],
-    paymentPrice: 5000,
-    status: "Not Started",
-    posterName: "Alice Johnson",
-    milestones: [
-      { id: 1, name: "Requirements Gathering", status: "Not Started" },
-      { id: 2, name: "Development", status: "Not Started" },
-      { id: 3, name: "Testing and Launch", status: "Not Started" },
-    ],
-  },
-  {
-    id: 4,
-    title: "Fitness Tracker",
-    description:
-      "A mobile app for tracking workouts, nutrition, and overall fitness progress. Includes features like custom workout plans, meal logging, and integration with wearable devices.",
-    estimatedTime: "2 months",
-    teamSize: 4,
-    techStack: ["React Native", "Node.js", "MongoDB", "GraphQL", "Apollo"],
-    paymentPrice: 12000,
-    status: "In Progress",
-    posterName: "Bob Williams",
-    milestones: [
-      { id: 1, name: "App Design and Prototyping", status: "Completed" },
-      { id: 2, name: "Core Functionality Development", status: "In Progress" },
-      { id: 3, name: "Integration with Wearables", status: "Not Started" },
-      { id: 4, name: "Beta Testing and Refinement", status: "Not Started" },
-    ],
-  },
+const uniqueTechStacks = [
+  "JavaScript",
+  "Python",
+  "Java",
+  "C#",
+  "C++",
+  "PHP",
+  "Ruby",
+  "Swift",
+  "Go",
+  "Kotlin",
+  "TypeScript",
+  "React",
+  "Angular",
+  "Vue.js",
+  "Node.js",
+  "Django",
+  "Flask",
+  "Spring Boot",
+  "Express.js",
+  "Laravel",
+  "Ruby on Rails",
+  "TensorFlow",
+  "PyTorch",
+  "MongoDB",
+  "PostgreSQL",
+  "MySQL",
+  "Firebase",
 ];
 
 export function ProjectsSection() {
@@ -78,22 +39,44 @@ export function ProjectsSection() {
   const [selectedTechStack, setSelectedTechStack] = useState("");
   const [selectedProject, setSelectedProject] = useState(null);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Fetch projects from the API
+    const fetchProjects = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/project");
+        if (response.ok) {
+          const data = await response.json();
+          setProjects(data);  // Store fetched projects
+        } else {
+          throw new Error("Failed to fetch projects");
+        }
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
+  }, []);
 
   const filteredProjects = projects.filter(
     (project) =>
       project.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedTechStack === "" ||
-        project.techStack.includes(selectedTechStack))
+      (selectedTechStack === "" || project.techStack.includes(selectedTechStack))
   );
-
-  const uniqueTechStacks = [
-    ...new Set(projects.flatMap((project) => project.techStack)),
-  ];
 
   const handleViewMore = (project) => {
     setSelectedProject(project);
     setIsSliderOpen(true);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;  // Add loading state
+  }
 
   return (
     <div className="bg-gray-100 py-12">
