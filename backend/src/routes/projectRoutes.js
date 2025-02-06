@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const {
+    getAllProjectsOfPoster,
     getAllProjects,
 getProject,
 createProject,
@@ -10,7 +11,8 @@ deleteProject
 const authMiddleware = require("../middlewares/authMiddleware");
 
 // Get all projects
-router.get("/", authMiddleware, getAllProjects);
+router.get("/", getAllProjects);
+router.get("/poster", authMiddleware, getAllProjectsOfPoster);
 
 // Get a single project by ID
 router.get("/:id", authMiddleware, getProject);
