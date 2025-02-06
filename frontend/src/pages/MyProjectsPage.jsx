@@ -20,57 +20,34 @@ import {
 } from "../components/ui/tabs";
 import { Clock, Users, Briefcase, ArrowUpRight } from "lucide-react";
 
-// Mock function to fetch user's projects
-const fetchUserProjects = async (userId) => {
-  // In a real application, this would be an API call
-  return [
-    {
-      id: 1,
-      title: "E-commerce Platform",
-      description:
-        "A full-featured online store with product management, shopping cart, and secure checkout process.",
-      status: "In Progress",
-      progress: 65,
-      dueDate: "2023-08-15",
-      teamSize: 5,
-      category: "Web Development",
-      techStack: ["React", "Node.js", "MongoDB", "Redux", "Express"],
-    },
-    {
-      id: 2,
-      title: "Task Management App",
-      description:
-        "A comprehensive task management solution with features like task creation, assignment, due dates, priority levels, and progress tracking.",
-      status: "Planning",
-      progress: 20,
-      dueDate: "2023-09-30",
-      teamSize: 3,
-      category: "Mobile App",
-      techStack: ["React Native", "Firebase", "Redux"],
-    },
-    {
-      id: 3,
-      title: "AI-powered Analytics Dashboard",
-      description:
-        "An advanced analytics dashboard using machine learning algorithms to provide predictive insights and data visualization.",
-      status: "Completed",
-      progress: 100,
-      dueDate: "2023-05-01",
-      teamSize: 4,
-      category: "Data Science",
-      techStack: ["Python", "TensorFlow", "D3.js", "Flask", "PostgreSQL"],
-    },
-  ];
-};
-
 function MyProjectsPage() {
   const [projects, setProjects] = useState([]);
   const [activeTab, setActiveTab] = useState("all");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // In a real application, you would get the user ID from authentication
-    const userId = "current-user-id";
-    fetchUserProjects(userId).then(setProjects);
+    const fetchProjects = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:5000/api/project", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`, // Add the token here
+          }});
+        if (!response.ok) {
+          throw new Error("Failed to fetch projects");
+        }
+        const data = await response.json();
+        setProjects(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjects();
   }, []);
 
   const filteredProjects =
@@ -81,7 +58,7 @@ function MyProjectsPage() {
         );
 
   const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
+    switch (status?.toLowerCase()) {
       case "in progress":
         return "bg-blue-100 text-blue-800";
       case "planning":
@@ -92,6 +69,14 @@ function MyProjectsPage() {
         return "bg-gray-100 text-gray-800";
     }
   };
+
+  if (loading) {
+    return <p className="text-center text-lg">Loading projects...</p>;
+  }
+
+  if (error) {
+    return <p className="text-center text-red-500">{error}</p>;
+  }
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -138,27 +123,30 @@ function MyProjectsPage() {
                 <div>
                   <div className="flex justify-between text-sm text-muted-foreground mb-1">
                     <span>Progress</span>
-                    <span>{project.progress}%</span>
+                    <span>{project.progress || 0}%</span>
                   </div>
-                  <Progress value={project.progress} className="w-full" />
+                  <Progress value={project.progress || 0} className="w-full" />
                 </div>
                 <div className="flex items-center text-sm text-muted-foreground">
                   <Clock className="mr-2 h-4 w-4" />
-                  Due: {project.dueDate}
+                  Due: {project.dueDate || "N/A"}
                 </div>
                 <div className="flex items-center text-sm text-muted-foreground">
                   <Users className="mr-2 h-4 w-4" />
-                  Team Size: {project.teamSize}
+                  Team Size: {project.teamSize || "N/A"}
                 </div>
                 <div className="flex items-center text-sm text-muted-foreground">
                   <Briefcase className="mr-2 h-4 w-4" />
-                  {project.category}
+                  {project.category || "Uncategorized"}
                 </div>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col items-start">
               <div className="flex flex-wrap gap-2 mb-4">
-                {project.techStack.map((tech) => (
+                {(Array.isArray(project.techStack)
+                  ? project.techStack
+                  : JSON.parse(project.techStack || "[]")
+                ).map((tech) => (
                   <Badge key={tech} variant="secondary">
                     {tech}
                   </Badge>
