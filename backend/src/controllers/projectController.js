@@ -1,4 +1,4 @@
-const { Project, Team, Reward } = require("../models");
+const { Project, Team, User } = require("../models");
 
 // Get all projects
 const getAllProjectsOfPoster = async (req, res) => {
@@ -14,14 +14,28 @@ const getAllProjectsOfPoster = async (req, res) => {
 };
 const getAllProjects = async (req, res) => {
   try {
-    const projects = await Project.findAll();
+    const projects = await Project.findAll({
+      include: {
+        model: User, // The related model
+        as: 'poster', // The alias for the association
+        attributes: ['name'], // Only select the 'name' field (posterName)
+      },
+    });
 
-    res.status(200).json(projects);
+    // Map over projects to replace the posterId with posterName
+    const projectsWithPosterName = projects.map((project) => ({
+      ...project.toJSON(),
+      posterName: project.poster ? project.poster.name : "None", // Use alias here to access posterName
+    }));
+
+    // Respond with the modified projects
+    res.status(200).json(projectsWithPosterName);
   } catch (error) {
     console.error("Error fetching projects:", error);
     res.status(500).json({ error: "Failed to fetch projects" });
   }
 };
+
 
 // Get a single project by ID
 const getProject = async (req, res) => {
