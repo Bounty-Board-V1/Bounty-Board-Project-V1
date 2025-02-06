@@ -28,7 +28,7 @@ const CreateProject = () => {
     title: "",
     description: "",
     posterId: user?.id,
-    statusId: "Open",
+    status: "Open",
     rewardAmount: "",
     techStack: [],
     estimatedTime: "",
@@ -68,6 +68,7 @@ const CreateProject = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+console.log(JSON.stringify(formData));
 
     try {
       const token = localStorage.getItem("token"); // Ensure your AuthContext provides the token
@@ -86,7 +87,7 @@ const CreateProject = () => {
           title: "Project created successfully!",
           description: "Your new project has been added to the system.",
         });
-        navigate("/projects");
+        navigate("/my-projects");
       } else {
         throw new Error("Failed to create project");
       }
@@ -100,7 +101,7 @@ const CreateProject = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-3xl h-[calc(100vh-28rem)] flex flex-col">
+    <div className="container mx-auto p-4 max-w-3xl h-[65vh] flex flex-col">
       <Card>
         <CardHeader>
           <CardTitle>Create New Project</CardTitle>

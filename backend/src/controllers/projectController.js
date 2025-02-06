@@ -53,6 +53,7 @@ const createProject = async (req, res) => {
       description,
       rewardAmount,
       techStack,
+      status,
       estimatedTime,
       timeline,
     } = req.body;
@@ -64,6 +65,7 @@ const createProject = async (req, res) => {
       posterId,
       rewardAmount,
       techStack,
+      status,
       estimatedTime,
       timeline,
     });
