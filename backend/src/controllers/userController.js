@@ -149,14 +149,18 @@ const completeUserProfile = async (req, res) => {
 
 // Update User Profile
 const updateUserProfile = async (req, res) => {
+  console.log("Files received:", req.files);
   try {
     const { name, email, profileCompleted, techStack } = req.body;
+
+    // Log files received
+    console.log("Files received:", req.files);
 
     // Parse techStack (if provided) from a JSON string
     let parsedTechStack = [];
     if (techStack) {
       try {
-        parsedTechStack = JSON.parse(techStack); // Parse array from JSON string
+        parsedTechStack = JSON.parse(techStack);
       } catch (err) {
         return res.status(400).json({ error: "Invalid format for techStack." });
       }
@@ -164,32 +168,16 @@ const updateUserProfile = async (req, res) => {
 
     // Construct updatedFields object
     const updatedFields = {
-      ...(name && { name }), // Update name if provided
-      ...(secondaryEmail && { secondaryEmail }), // Update secondary email if provided
-      ...(req.files?.cv && { cv: `/uploads/${req.files.cv[0].filename}` }), // Handle CV upload
-      ...(req.files?.image && {
-        image: `/uploads/${req.files.image[0].filename}`,
-      }), // Handle image upload
       ...(name && { name }),
       ...(email && { email }),
-      ...(profileCompleted !== undefined && {
-        profileCompleted: profileCompleted === "true",
-      }), // Convert to boolean
+      ...(req.files.CV && { CV: `/uploads/${req.files.CV[0].filename}` }),
+      ...(req.files.image && { image: `/uploads/${req.files.image[0].filename}` }),
+      ...(profileCompleted !== undefined && { profileCompleted: profileCompleted === "true" }),
       ...(parsedTechStack.length > 0 && { techStack: parsedTechStack }),
     };
 
-    // Handle file uploads
-    if (req.files) {
-      if (req.files.cv && req.files.cv[0]) {
-        updatedFields.cv = req.files.cv[0].path; // Save CV file path
-      }
-      if (req.files.image && req.files.image[0]) {
-        updatedFields.image = req.files.image[0].path; // Save image file path
-      }
-    }
-
     // Update user in the database
-    const userId = req.user.id; // Assuming the user ID is retrieved from authentication
+    const userId = req.user.id;
     const [updated] = await User.update(updatedFields, {
       where: { id: userId },
     });
@@ -201,12 +189,9 @@ const updateUserProfile = async (req, res) => {
     return res.status(200).json({ message: "Profile updated successfully." });
   } catch (error) {
     console.error("Error updating profile:", error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while updating the profile." });
+    return res.status(500).json({ error: "An error occurred while updating the profile." });
   }
 };
-
 const resetPassword = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmPassword } = req.body;

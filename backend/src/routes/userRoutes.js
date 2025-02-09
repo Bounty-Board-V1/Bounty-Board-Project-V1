@@ -19,7 +19,7 @@ router.get("/profile", authMiddleware, getUserProfile);
 router.put(
   "/profile",
   upload.fields([
-    { name: "cv", maxCount: 1 },
+    { name: "CV", maxCount: 1 },
     { name: "image", maxCount: 1 },
   ]),
   authMiddleware,

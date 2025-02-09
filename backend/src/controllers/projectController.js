@@ -65,7 +65,7 @@ const getProject = async (req, res) => {
 // Create a new project
 const createProject = async (req, res) => {
   try {
-    console.log(req.body);
+    console.log(req.user);
 
     const {
       title,
@@ -76,7 +76,7 @@ const createProject = async (req, res) => {
       estimatedTime,
       timeline,
     } = req.body;
-    const posterId = req.user.id; // Assuming the token middleware adds the user ID to req.user
+    const posterId = 2; // Assuming the token middleware adds the user ID to req.user
 
     const newProject = await Project.create({
       title,

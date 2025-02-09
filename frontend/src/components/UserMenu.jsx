@@ -16,6 +16,7 @@ import { useCustomToast } from "@/hooks/useCustomToast"; // Import toast
 import { useAuth } from "@/context/AuthContext";
 
 export function UserMenu() {
+    const { user } = useAuth(); // Fetch and validate user
   const navigate = useNavigate();
   const { showToast } = useCustomToast(); // Initialize toast
   const { logout } = useAuth();
@@ -58,9 +59,9 @@ export function UserMenu() {
       <DropdownMenuContent className="w-56" align="end" forceMount>
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none">username</p>
+            <p className="text-sm font-medium leading-none">{user.name}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              user@example.com
+              {user.email}
             </p>
           </div>
         </DropdownMenuLabel>

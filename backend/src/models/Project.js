@@ -12,7 +12,7 @@ const Project = sequelize.define("Project", {
     allowNull: false,
   },
   description: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: true,
   },
   posterId: {

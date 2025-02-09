@@ -132,7 +132,7 @@ const CreateProject = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-3xl h-[65vh] flex flex-col">
+    <div className="container mx-auto p-4 max-w-3xl h-[90vh] flex flex-col">
       <Card>
         <CardHeader>
           <CardTitle>Create New Project</CardTitle>
@@ -262,7 +262,17 @@ const CreateProject = () => {
               Previous
             </Button>
             {activeTab !== "timeline" ? (
-              <Button onClick={() => setActiveTab("timeline")}>Next</Button>
+              <Button
+  onClick={() => {
+    const tabs = ["basic", "details", "timeline"];
+    const currentIndex = tabs.indexOf(activeTab);
+    if (currentIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentIndex + 1]); // Move to the next tab dynamically
+    }
+  }}
+>
+  Next
+</Button>
             ) : (
               <Button type="submit" onClick={handleSubmit}>
                 Create Project
