@@ -86,17 +86,18 @@ const getUserProfile = async (req, res) => {
         "email",
         "roleId",
         "image",
+        "CV",
         "profileCompleted",
         "techStack",
       ],
       include: [
         {
           model: Role,
-          attributes: ["id", "role"],
+          attributes: [ "role"],
         },
         {
           model: Team,
-          attributes: ["id", "name"], // Include team info if applicable
+          attributes: ["name"], // Include team info if applicable
         },
       ],
     });
