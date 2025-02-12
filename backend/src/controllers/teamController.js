@@ -20,28 +20,28 @@ const createTeam = async (req, res) => {
 // Add members to a team using their emails
 const approveTeamRequest = async (req, res) => {
   try {
-    const { requestId } = req.body;
+    const requestId = req.params.id;
     const userId = req.user.id; // Extract user ID from token
 
     if (!requestId) {
       return res.status(400).json({ error: "Invalid request ID" });
     }
 
+    // Find the request by ID
     const request = await Request.findByPk(requestId);
     if (!request || request.isDeleted) {
       return res.status(404).json({ error: "Request not found or already handled" });
     }
 
     // Ensure the request is for the authenticated user
-    const user = await User.findOne({ where: { id: userId, email: req.user.email } });
-    if (!user) {
-      return res.status(403).json({ error: "Unauthorized request" });
+    if (request.receiverId !== userId) {
+      return res.status(403).json({ error: "Unauthorized: You cannot approve this request" });
     }
 
     // Assign the user to the team
-    await user.update({ teamId: request.teamId });
+    await User.update({ teamId: request.teamId }, { where: { id: userId } });
 
-    // Mark request as deleted (soft delete)
+    // Soft delete the request (mark as handled)
     await request.update({ isDeleted: true });
 
     res.status(200).json({ message: "User successfully added to the team!" });
@@ -50,6 +50,7 @@ const approveTeamRequest = async (req, res) => {
     res.status(500).json({ error: "Failed to approve request" });
   }
 };
+
 
 
 // Get all teams

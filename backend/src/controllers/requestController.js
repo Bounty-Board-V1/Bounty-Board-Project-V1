@@ -1,7 +1,7 @@
 const { Request, Project, User, Team, Notification } = require("../models");
 const sendTeamRequest = async (req, res) => {
   try {
-    const posterId=req.user.id
+    const posterId = req.user.id
     const { teamId, emails } = req.body;
 
     if (!teamId || !Array.isArray(emails) || emails.length < 1) {
@@ -18,14 +18,15 @@ const sendTeamRequest = async (req, res) => {
       return res.status(404).json({ error: "Some users not found" });
     }
 
-    // Create requests for each user
+    // Create requests with receiverId
     await Promise.all(
       users.map((user) =>
         Request.create({
           name: `Request to join ${team.name}`,
           teamId,
           posterId,
-          isDeleted: false, // Default false, indicating active request
+          receiverId: user.id,  // Now storing the receiver ID
+          isDeleted: false,
         })
       )
     );
@@ -36,6 +37,7 @@ const sendTeamRequest = async (req, res) => {
     res.status(500).json({ error: "Failed to send requests" });
   }
 };
+
 // Create a new request
 const createRequest = async (req, res) => {
   try {
