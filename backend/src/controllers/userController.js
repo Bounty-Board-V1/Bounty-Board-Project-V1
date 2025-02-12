@@ -1,4 +1,4 @@
-const { User, Role, Team } = require("../models"); // Ensure Team is included for relationships
+const { User, Role, Team, Request } = require("../models"); // Ensure Team is included for relationships
 const bcrypt = require("bcrypt");
 
 // User Registration
@@ -242,6 +242,25 @@ const resetPassword = async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
+const getUserRequests = async (req, res) => {
+  try {
+    const userEmail = req.user.email; // Extract email from token
+
+    // Find the user by email
+    const user = await User.findOne({ where: { email: userEmail } });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Get all requests related to the user's team
+    const requests = await Request.findAll({ where: { teamId: user.teamId, isDeleted: false } });
+
+    res.status(200).json({ requests });
+  } catch (error) {
+    console.error("Error fetching user requests:", error);
+    res.status(500).json({ error: "Failed to retrieve requests" });
+  }
+};
 
 module.exports = {
   createUserProfile,
@@ -249,4 +268,5 @@ module.exports = {
   completeUserProfile,
   updateUserProfile,
   resetPassword,
+  getUserRequests
 };
