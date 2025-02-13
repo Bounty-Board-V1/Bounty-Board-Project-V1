@@ -38,8 +38,6 @@ const sendTeamRequest = async (req, res) => {
     res.status(500).json({ error: "Failed to send request" });
   }
 };
-
-
 // Create a new request
 const createRequest = async (req, res) => {
   try {

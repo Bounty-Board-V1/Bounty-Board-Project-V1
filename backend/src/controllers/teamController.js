@@ -72,7 +72,7 @@ const approveTeamRequest = async (req, res) => {
 
     // Find the request by ID
     const request = await Request.findByPk(requestId);
-    if (!request || request.isDeleted) {
+    if (!request) {
       return res.status(404).json({ error: "Request not found or already handled" });
     }
 
@@ -84,15 +84,24 @@ const approveTeamRequest = async (req, res) => {
     // Assign the user to the team
     await User.update({ teamId: request.teamId }, { where: { id: userId } });
 
-    // Soft delete the request (mark as handled)
-    await request.update({ isDeleted: true });
+    // **Check if the request can be deleted before attempting to destroy**
+    console.log("Deleting request with ID:", requestId);
 
-    res.status(200).json({ message: "User successfully added to the team!" });
+    // Try deleting the request
+    const deleteResult = await Request.destroy({ where: { id: requestId } });
+
+    if (deleteResult === 0) {
+      console.warn("Request was not deleted, possibly due to constraints.");
+      return res.status(500).json({ error: "Failed to delete request after approval." });
+    }
+
+    res.status(200).json({ message: "User successfully added to the team and request deleted!" });
   } catch (error) {
     console.error("Error approving request:", error);
     res.status(500).json({ error: "Failed to approve request" });
   }
 };
+
 
 
 
@@ -166,6 +175,38 @@ const deleteTeam = async (req, res) => {
     res.status(500).json({ error: "Failed to delete team" });
   }
 };
+const removeMemberFromTeam = async (req, res) => {
+  try {
+    const { userId } = req.params; // Get the user ID from the request parameters
+    const { teamId } = req.body; // Get the team ID from the request body
+
+    // Check if the team exists
+    const team = await Team.findOne({
+      where: { id: teamId },
+    });
+
+    if (!team) {
+      return res.status(404).json({ message: "Team not found." });
+    }
+
+    // Check if the user exists and is part of the team
+    const user = await User.findOne({
+      where: { id: userId, teamId },
+    });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found or not a member of this team." });
+    }
+
+    // Remove the user from the team by setting their teamId to null
+    await user.update({ teamId: null });
+
+    res.status(200).json({ message: "User removed from the team successfully." });
+  } catch (error) {
+    console.error("Error removing user from team:", error);
+    res.status(500).json({ error: "Failed to remove user from team." });
+  }
+};
 
 module.exports = {
   createTeam,
@@ -174,5 +215,6 @@ module.exports = {
   updateTeam,
   deleteTeam,
   approveTeamRequest,
-  getTeamsByCreator
+  getTeamsByCreator,
+  removeMemberFromTeam
 };

@@ -25,8 +25,8 @@ import { useDebounce } from "@/hooks/useDebounce";
 const API_BASE_URL = "http://localhost:5000/api";
 
 const TeamManagementPage = () => {
-    const { user } = useAuth(); // Fetch and validate user
-  
+  const { user } = useAuth(); // Fetch and validate user
+
   const [teams, setTeams] = useState([]);
   const [newTeamName, setNewTeamName] = useState("");
   const [newMemberEmail, setNewMemberEmail] = useState("");
@@ -52,9 +52,7 @@ const TeamManagementPage = () => {
         if (!response.ok) throw new Error("Failed to fetch teams");
         const data = await response.json();
         console.log(data);
-        
-        
-        
+
         // Ensure each team includes the creator information
         const formattedTeams = data.teams.map((team) => ({
           ...team,
@@ -95,7 +93,7 @@ const TeamManagementPage = () => {
   };
 
   // Request to Join a Team
-  const handleAddMember = async (e) => {    
+  const handleAddMember = async (e) => {
     e.preventDefault();
     if (!selectedTeam) {
       showToast("Error", "Please select a team first.", "destructive");
@@ -106,9 +104,9 @@ const TeamManagementPage = () => {
       const response = await fetch(`${API_BASE_URL}/request/team`, {
         method: "POST",
         headers,
-        body: JSON.stringify({ teamId: selectedTeam.id, email: newMemberEmail}),
+        body: JSON.stringify({ teamId: selectedTeam.id, email: newMemberEmail }),
       });
-      
+
       if (!response.ok) throw new Error("Failed to send join request");
 
       showToast(
@@ -118,6 +116,37 @@ const TeamManagementPage = () => {
       );
       setNewMemberEmail("");
       setUserSuggestions([]);
+    } catch (error) {
+      showToast("Error", error.message, "destructive");
+    }
+  };
+
+  // Remove Team Member
+  const handleRemoveMember = async (teamId, memberId) => {
+    console.log(JSON.stringify({ teamId }));
+    
+    try {
+      const response = await fetch(`${API_BASE_URL}/team/removeMember/${memberId}`, {
+        method: "DELETE",
+        headers,
+        body: JSON.stringify({ teamId }),
+      });
+
+      if (!response.ok) throw new Error("Failed to remove member");
+
+      // Update the team list after removing the member
+      setTeams((prevTeams) =>
+        prevTeams.map((team) =>
+          team.id === teamId
+            ? {
+                ...team,
+                members: team.members.filter((member) => member.id !== memberId),
+              }
+            : team
+        )
+      );
+
+      showToast("Member Removed", "The member has been removed from the team.", "success");
     } catch (error) {
       showToast("Error", error.message, "destructive");
     }
@@ -209,19 +238,32 @@ const TeamManagementPage = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>Name</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Admin</TableHead>
+                    <TableHead>Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   <TableRow key={`creator-${team.id}`}>
+                    <TableCell>{user.name}</TableCell>
                     <TableCell>{user.email}</TableCell>
                     <TableCell>Yes</TableCell>
+                    <TableCell></TableCell>
                   </TableRow>
-                  {team.members.map((member, index) => (
-                    <TableRow key={index}>
+                  {team.members.map((member) => (
+                    <TableRow key={member.id}>
+                      <TableCell>{member.name}</TableCell>
                       <TableCell>{member.email}</TableCell>
                       <TableCell>No</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleRemoveMember(team.id, member.id)}
+                        >
+                          Remove
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
