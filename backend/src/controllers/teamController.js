@@ -4,18 +4,61 @@ const { Team, Project, Request, User } = require("../models");
 const createTeam = async (req, res) => {
   try {
     const { name } = req.body;
+    const createrId = req.user.id; // Extract user ID from token
 
     if (!name) {
       return res.status(400).json({ error: "Team must have a name" });
     }
 
-    const newTeam = await Team.create({ name });
+    // Create new team with creatorId
+    const newTeam = await Team.create({ name, createrId });
+
     res.status(201).json({ team: newTeam, message: "Team created successfully!" });
   } catch (error) {
     console.error("Error creating team:", error);
     res.status(500).json({ error: "Failed to create team" });
   }
 };
+
+const getTeamsByCreator = async (req, res) => {
+  try {
+    const createrId = req.user.id;
+
+    // Fetch all teams created by this user, including team members
+    const teams = await Team.findAll({
+      where: { createrId }, // Make sure 'creatorId' is the correct column name
+      include: [
+        {
+          model: User,
+          as: 'creater',
+          attributes: ['id', 'email', 'name'],
+        },
+        {
+          model: User,
+          as: 'members',
+          attributes: ['id', 'email', 'name'],
+        },
+      ],
+    });
+
+    if (!teams.length) {
+      return res.status(404).json({ message: "No teams found for this user." });
+    }
+
+    const formattedTeams = teams.map(team => ({
+      id: team.id,
+      name: team.name,
+      creater: team.creater,
+      members: team.members,
+    }));
+
+    res.status(200).json({ teams: formattedTeams });
+  } catch (error) {
+    console.error("Error fetching teams:", error);
+    res.status(500).json({ error: "Failed to fetch teams" });
+  }
+};
+
 
 // Add members to a team using their emails
 const approveTeamRequest = async (req, res) => {
@@ -130,5 +173,6 @@ module.exports = {
   getTeamById,
   updateTeam,
   deleteTeam,
-  approveTeamRequest
+  approveTeamRequest,
+  getTeamsByCreator
 };

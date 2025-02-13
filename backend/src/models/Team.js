@@ -11,6 +11,15 @@ const Team = sequelize.define("Team", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  createrId: {
+    type: DataTypes.INTEGER,
+    allowNull: false, // Ensure a creator must be assigned
+    references: {
+      model: "Users", // Refers to the Users table
+      key: "id",
+    },
+    onDelete: "CASCADE", // Ensures that if a user is deleted, their teams are also handled
+  },
   isDeleted: {
     type: DataTypes.INTEGER,
     defaultValue: 0,

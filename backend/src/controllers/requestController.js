@@ -1,42 +1,44 @@
 const { Request, Project, User, Team, Notification } = require("../models");
 const sendTeamRequest = async (req, res) => {
+  console.log(req.body);
+  
   try {
-    const posterId = req.user.id
-    const { teamId, emails } = req.body;
+    const posterId = req.user.id; // Get the ID of the user sending the request
+    const { teamId, email } = req.body; // Expect a single email
 
-    if (!teamId || !Array.isArray(emails) || emails.length < 1) {
-      return res.status(400).json({ error: "Invalid team ID or members list" });
+    // Validate the inputs
+    if (!teamId || !email) {
+      return res.status(400).json({ error: "Invalid team ID or email" });
     }
 
+    // Find the team based on teamId
     const team = await Team.findByPk(teamId);
     if (!team) {
       return res.status(404).json({ error: "Team not found" });
     }
 
-    const users = await User.findAll({ where: { email: emails } });
-    if (users.length !== emails.length) {
-      return res.status(404).json({ error: "Some users not found" });
+    // Find the user based on the provided email
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
     }
 
-    // Create requests with receiverId
-    await Promise.all(
-      users.map((user) =>
-        Request.create({
-          name: `Request to join ${team.name}`,
-          teamId,
-          posterId,
-          receiverId: user.id,  // Now storing the receiver ID
-          isDeleted: false,
-        })
-      )
-    );
+    // Create a request for the user
+    await Request.create({
+      name: `Request to join ${team.name}`,
+      teamId,
+      posterId, // The ID of the user sending the request
+      receiverId: user.id, // The user receiving the request
+      isDeleted: false,
+    });
 
-    res.status(201).json({ message: "Requests sent successfully!" });
+    res.status(201).json({ message: "Request sent successfully!" });
   } catch (error) {
-    console.error("Error sending requests:", error);
-    res.status(500).json({ error: "Failed to send requests" });
+    console.error("Error sending request:", error);
+    res.status(500).json({ error: "Failed to send request" });
   }
 };
+
 
 // Create a new request
 const createRequest = async (req, res) => {
