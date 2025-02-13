@@ -1,8 +1,6 @@
 const { Request, Project, User, Team, Notification } = require("../models");
 const sendTeamRequest = async (req, res) => {
-  console.log(req.body);
-  
-  try {
+try {
     const posterId = req.user.id; // Get the ID of the user sending the request
     const { teamId, email } = req.body; // Expect a single email
 

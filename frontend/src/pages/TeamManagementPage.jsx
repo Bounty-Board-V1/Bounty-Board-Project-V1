@@ -51,7 +51,7 @@ const TeamManagementPage = () => {
         });
         if (!response.ok) throw new Error("Failed to fetch teams");
         const data = await response.json();
-        console.log(data);
+        
 
         // Ensure each team includes the creator information
         const formattedTeams = data.teams.map((team) => ({
@@ -122,9 +122,7 @@ const TeamManagementPage = () => {
   };
 
   // Remove Team Member
-  const handleRemoveMember = async (teamId, memberId) => {
-    console.log(JSON.stringify({ teamId }));
-    
+  const handleRemoveMember = async (teamId, memberId) => {  
     try {
       const response = await fetch(`${API_BASE_URL}/team/removeMember/${memberId}`, {
         method: "DELETE",
