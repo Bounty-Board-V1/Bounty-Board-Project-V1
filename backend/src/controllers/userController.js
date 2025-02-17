@@ -153,7 +153,7 @@ const completeUserProfile = async (req, res) => {
 const updateUserProfile = async (req, res) => {
   console.log("Files received:", req.files);
   try {
-    const { name, email, profileCompleted, techStack } = req.body;
+    const { name, email, profileCompleted, secondaryEmail,techStack } = req.body;
 
     // Log files received
     console.log("Files received:", req.files);
@@ -172,11 +172,25 @@ const updateUserProfile = async (req, res) => {
     const updatedFields = {
       ...(name && { name }),
       ...(email && { email }),
-      ...(req.files.CV && { CV: `/uploads/${req.files.CV[0].filename}` }),
-      ...(req.files.image && { image: `/uploads/${req.files.image[0].filename}` }),
+      ...(secondaryEmail && { secondaryEmail }),
       ...(profileCompleted !== undefined && { profileCompleted: profileCompleted === "true" }),
       ...(parsedTechStack.length > 0 && { techStack: parsedTechStack }),
     };
+
+    // Save CV and image to local directory
+    if (req.files.image) {
+      const imageFile = req.files.image[0];
+      const imagePath = path.join(__dirname, '..', 'uploads', imageFile.filename);
+      fs.renameSync(imageFile.path, imagePath); // Move file to uploads directory
+      updatedFields.image = `/uploads/${imageFile.filename}`;
+    }
+
+    if (req.files.CV) {
+      const cvFile = req.files.CV[0];
+      const cvPath = path.join(__dirname, '..', 'uploads', cvFile.filename);
+      fs.renameSync(cvFile.path, cvPath); // Move file to uploads directory
+      updatedFields.CV = `/uploads/${cvFile.filename}`;
+    }
 
     // Update user in the database
     const userId = req.user.id;
@@ -193,7 +207,7 @@ const updateUserProfile = async (req, res) => {
     console.error("Error updating profile:", error);
     return res.status(500).json({ error: "An error occurred while updating the profile." });
   }
-};
+}
 const resetPassword = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmPassword } = req.body;
