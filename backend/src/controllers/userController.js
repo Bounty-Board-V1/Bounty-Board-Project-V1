@@ -270,6 +270,7 @@ const searchUsers = async (req, res) => {
         email: {
           [Op.iLike]: `%${email}%`, // Case-insensitive partial match
         },
+        teamId:null,
       },
       attributes: ["id", "name", "email"], // Return only necessary fields
     });
