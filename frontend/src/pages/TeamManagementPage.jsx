@@ -25,8 +25,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 const API_BASE_URL = "http://localhost:5000/api";
 
 const TeamManagementPage = () => {
-  const { user } = useAuth(); // Fetch and validate user
-
+  const { user } = useAuth();
   const [teams, setTeams] = useState([]);
   const [newTeamName, setNewTeamName] = useState("");
   const [newMemberEmail, setNewMemberEmail] = useState("");
@@ -35,14 +34,13 @@ const TeamManagementPage = () => {
   const debouncedSearchTerm = useDebounce(newMemberEmail, 300);
   const { showToast } = useCustomToast();
 
-  const token = localStorage.getItem("token"); // Get the token
+  const token = localStorage.getItem("token");
 
   const headers = {
     "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`, // Add token to headers
+    Authorization: `Bearer ${token}`,
   };
 
-  // Fetch Teams from API
   useEffect(() => {
     const fetchTeams = async () => {
       try {
@@ -51,24 +49,37 @@ const TeamManagementPage = () => {
         });
         if (!response.ok) throw new Error("Failed to fetch teams");
         const data = await response.json();
-        
 
-        // Ensure each team includes the creator information
-        const formattedTeams = data.teams.map((team) => ({
-          ...team,
-          creatorEmail: user.email,
-          members: team.members || [],
-        }));
-
-        setTeams(formattedTeams);
+        setTeams(data.teams);
       } catch (error) {
         showToast("Error", error.message, "destructive");
       }
     };
     fetchTeams();
-  }, [token]); // Re-run effect when token changes
+  }, [token]);
 
-  // Create New Team
+  const fetchUserSuggestions = async (email) => {
+    if (!email) {
+      setUserSuggestions([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/user/searchUsers?email=${email}`, { headers });
+      if (!response.ok) throw new Error("Failed to fetch user suggestions");
+
+      const data = await response.json();
+      setUserSuggestions(data);
+    } catch (error) {
+      console.error("Error fetching user suggestions:", error);
+      setUserSuggestions([]);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserSuggestions(debouncedSearchTerm);
+  }, [debouncedSearchTerm]);
+
   const handleCreateTeam = async (e) => {
     e.preventDefault();
     try {
@@ -80,10 +91,7 @@ const TeamManagementPage = () => {
       if (!response.ok) throw new Error("Failed to create team");
 
       const newTeam = await response.json();
-      setTeams([
-        ...teams,
-        { ...newTeam, creatorEmail: newTeam.creator?.email, members: [] },
-      ]);
+      setTeams([...teams, newTeam]);
       setNewTeamName("");
 
       showToast("Team Created", `${newTeamName} has been created.`, "success");
@@ -92,7 +100,6 @@ const TeamManagementPage = () => {
     }
   };
 
-  // Request to Join a Team
   const handleAddMember = async (e) => {
     e.preventDefault();
     if (!selectedTeam) {
@@ -109,11 +116,7 @@ const TeamManagementPage = () => {
 
       if (!response.ok) throw new Error("Failed to send join request");
 
-      showToast(
-        "Request Sent",
-        `Join request sent to ${selectedTeam.name}.`,
-        "success"
-      );
+      showToast("Request Sent", `Join request sent to ${selectedTeam.name}.`, "success");
       setNewMemberEmail("");
       setUserSuggestions([]);
     } catch (error) {
@@ -121,8 +124,7 @@ const TeamManagementPage = () => {
     }
   };
 
-  // Remove Team Member
-  const handleRemoveMember = async (teamId, memberId) => {  
+  const handleRemoveMember = async (teamId, memberId) => {
     try {
       const response = await fetch(`${API_BASE_URL}/team/removeMember/${memberId}`, {
         method: "DELETE",
@@ -132,7 +134,6 @@ const TeamManagementPage = () => {
 
       if (!response.ok) throw new Error("Failed to remove member");
 
-      // Update the team list after removing the member
       setTeams((prevTeams) =>
         prevTeams.map((team) =>
           team.id === teamId
@@ -155,7 +156,6 @@ const TeamManagementPage = () => {
       <h1 className="text-3xl font-bold mb-8">Team Management</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {/* Create Team */}
         <Card>
           <CardHeader>
             <CardTitle>Create New Team</CardTitle>
@@ -176,7 +176,6 @@ const TeamManagementPage = () => {
           </CardContent>
         </Card>
 
-        {/* Add Team Member */}
         <Card>
           <CardHeader>
             <CardTitle>Add Team Member</CardTitle>
@@ -188,9 +187,7 @@ const TeamManagementPage = () => {
                 id="teamSelect"
                 className="w-full p-2 border rounded"
                 onChange={(e) =>
-                  setSelectedTeam(
-                    teams.find((team) => team.id === parseInt(e.target.value))
-                  )
+                  setSelectedTeam(teams.find((team) => team.id === parseInt(e.target.value)))
                 }
                 required
               >
@@ -213,7 +210,22 @@ const TeamManagementPage = () => {
                   onChange={(e) => setNewMemberEmail(e.target.value)}
                   required
                 />
-                <Search className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                {userSuggestions.length > 0 && (
+                  <ul className="absolute w-full bg-white border border-gray-300 rounded shadow-md z-10">
+                    {userSuggestions.map((user) => (
+                      <li
+                        key={user.id}
+                        className="p-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => {
+                          setNewMemberEmail(user.email);
+                          setUserSuggestions([]);
+                        }}
+                      >
+                        {user.email}
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </div>
 
               <Button type="submit" className="mt-4">
@@ -222,53 +234,6 @@ const TeamManagementPage = () => {
             </form>
           </CardContent>
         </Card>
-      </div>
-
-      {/* Team List */}
-      <div className="mt-12">
-        <h2 className="text-2xl font-bold mb-4">Team List</h2>
-        {teams.map((team) => (
-          <Card key={team.id} className="mb-8">
-            <CardHeader>
-              <CardTitle>{team.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Admin</TableHead>
-                    <TableHead>Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow key={`creator-${team.id}`}>
-                    <TableCell>{user.name}</TableCell>
-                    <TableCell>{user.email}</TableCell>
-                    <TableCell>Yes</TableCell>
-                    <TableCell></TableCell>
-                  </TableRow>
-                  {team.members.map((member) => (
-                    <TableRow key={member.id}>
-                      <TableCell>{member.name}</TableCell>
-                      <TableCell>{member.email}</TableCell>
-                      <TableCell>No</TableCell>
-                      <TableCell>
-                        <Button
-                          variant="destructive"
-                          onClick={() => handleRemoveMember(team.id, member.id)}
-                        >
-                          Remove
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
-        ))}
       </div>
     </div>
   );

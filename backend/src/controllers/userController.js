@@ -1,5 +1,6 @@
 const { User, Role, Team, Request } = require("../models"); // Ensure Team is included for relationships
 const bcrypt = require("bcrypt");
+const { Op } = require("sequelize");
 
 // User Registration
 const createUserProfile = async (req, res) => {
@@ -255,7 +256,30 @@ const getUserRequests = async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve requests" });
   }
 };
+const searchUsers = async (req, res) => {
+  try {
+    const { email } = req.query;
 
+    if (!email) {
+      return res.status(400).json({ error: "Email query parameter is required" });
+    }
+
+    // Search users with email containing the input (case insensitive)
+    const users = await User.findAll({
+      where: {
+        email: {
+          [Op.iLike]: `%${email}%`, // Case-insensitive partial match
+        },
+      },
+      attributes: ["id", "name", "email"], // Return only necessary fields
+    });
+
+    res.json(users);
+  } catch (error) {
+    console.error("Error searching users:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 module.exports = {
   createUserProfile,
@@ -263,5 +287,6 @@ module.exports = {
   completeUserProfile,
   updateUserProfile,
   resetPassword,
-  getUserRequests
+  getUserRequests,
+  searchUsers
 };

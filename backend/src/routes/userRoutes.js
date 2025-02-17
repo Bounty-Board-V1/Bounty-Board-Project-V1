@@ -8,7 +8,8 @@ const {createUserProfile,
   getUserProfile,
   updateUserProfile,
   resetPassword,
-  getUserRequests
+  getUserRequests,
+  searchUsers
 } = require("../controllers/userController");
 const router = express.Router();
 
@@ -30,5 +31,6 @@ router.put(
 // Reset password
 router.post("/reset-password", authMiddleware, resetPassword);
 router.get("/requests", authMiddleware, getUserRequests);
+router.get("/searchUsers", authMiddleware,searchUsers)
 
 module.exports = router;
