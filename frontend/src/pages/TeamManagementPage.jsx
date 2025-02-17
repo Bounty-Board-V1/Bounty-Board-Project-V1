@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +24,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 const API_BASE_URL = "http://localhost:5000/api";
 
 const TeamManagementPage = () => {
-  const { user } = useAuth();
+  const { user } = useAuth(); // Ensure user object exists
   const [teams, setTeams] = useState([]);
   const [newTeamName, setNewTeamName] = useState("");
   const [newMemberEmail, setNewMemberEmail] = useState("");
@@ -234,6 +233,55 @@ const TeamManagementPage = () => {
             </form>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Team List */}
+      <div className="mt-12">
+        <h2 className="text-2xl font-bold mb-4">Team List</h2>
+        {teams.map((team) => (
+          <Card key={team.id} className="mb-8">
+            <CardHeader>
+              <CardTitle>{team.name}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Name</TableHead>
+                    <TableHead>Email</TableHead>
+                    <TableHead>Admin</TableHead>
+                    <TableHead>Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {user && (
+                    <TableRow key={`creator-${team.id}`}>
+                      <TableCell>{user.name}</TableCell>
+                      <TableCell>{user.email}</TableCell>
+                      <TableCell>Yes</TableCell>
+                      <TableCell></TableCell>
+                    </TableRow>
+                  )}
+                  {team.members && team.members.map((member) => (
+                    <TableRow key={member.id}>
+                      <TableCell>{member.name}</TableCell>
+                      <TableCell>{member.email}</TableCell>
+                      <TableCell>No</TableCell>
+                      <TableCell>
+                        <Button
+                          variant="destructive"
+                          onClick={() => handleRemoveMember(team.id, member.id)}
+                        >
+                          Remove
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        ))}
       </div>
     </div>
   );
