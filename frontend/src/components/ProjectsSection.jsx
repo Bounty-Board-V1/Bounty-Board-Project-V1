@@ -4,44 +4,65 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ProjectSlider from "./ProjectSlider";
 
+const uniqueTechStacks = [
+  "JavaScript",
+  "Python",
+  "Java",
+  "C#",
+  "C++",
+  "PHP",
+  "Ruby",
+  "Swift",
+  "Go",
+  "Kotlin",
+  "TypeScript",
+  "React",
+  "Angular",
+  "Vue.js",
+  "Node.js",
+  "Django",
+  "Flask",
+  "Spring Boot",
+  "Express.js",
+  "Laravel",
+  "Ruby on Rails",
+  "TensorFlow",
+  "PyTorch",
+  "MongoDB",
+  "PostgreSQL",
+  "MySQL",
+  "Firebase",
+];
 export function ProjectsSection() {
   const [projects, setProjects] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTechStack, setSelectedTechStack] = useState("");
   const [selectedProject, setSelectedProject] = useState(null);
   const [isSliderOpen, setIsSliderOpen] = useState(false);
+  const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
-  const [projectLoading, setProjectLoading] = useState(false);
 
-  // Fetch projects from backend
   useEffect(() => {
+    // Fetch projects from the API
     const fetchProjects = async () => {
       try {
-        const token = localStorage.getItem("token"); // Ensure your AuthContext provides the token
-
-        const response = await fetch("http://localhost:5000/api/project", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`, // Add the token here
-          },
-        });
-        if (!response.ok) {
+        const response = await fetch("http://localhost:5000/api/project");
+        if (response.ok) {
+          const data = await response.json();
+          setProjects(data);  // Store fetched projects
+        } else {
           throw new Error("Failed to fetch projects");
         }
-        const data = await response.json();
-        setProjects(data);
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchProjects();
   }, []);
-
+  
   // Fetch specific project when "View More" is clicked
   const handleViewMore = async (projectId) => {
     setProjectLoading(true);
@@ -74,13 +95,20 @@ export function ProjectsSection() {
   const filteredProjects = projects.filter(
     (project) =>
       project.title.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (selectedTechStack === "" ||
-        project.techStack.includes(selectedTechStack))
+      (selectedTechStack === "" || project.techStack.includes(selectedTechStack))
   );
 
   const uniqueTechStacks = [
     ...new Set(projects.flatMap((project) => project.techStack)),
   ];
+  const handleViewMore = (project) => {
+    setSelectedProject(project);
+    setIsSliderOpen(true);
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;  // Add loading state
+  }
 
   return (
     <div className="bg-gray-100 py-12">

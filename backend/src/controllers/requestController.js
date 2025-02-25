@@ -1,5 +1,41 @@
 const { Request, Project, User, Team, Notification } = require("../models");
+const sendTeamRequest = async (req, res) => {
+try {
+    const posterId = req.user.id; // Get the ID of the user sending the request
+    const { teamId, email } = req.body; // Expect a single email
 
+    // Validate the inputs
+    if (!teamId || !email) {
+      return res.status(400).json({ error: "Invalid team ID or email" });
+    }
+
+    // Find the team based on teamId
+    const team = await Team.findByPk(teamId);
+    if (!team) {
+      return res.status(404).json({ error: "Team not found" });
+    }
+
+    // Find the user based on the provided email
+    const user = await User.findOne({ where: { email } });
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Create a request for the user
+    await Request.create({
+      name: `Request to join ${team.name}`,
+      teamId,
+      posterId, // The ID of the user sending the request
+      receiverId: user.id, // The user receiving the request
+      isDeleted: false,
+    });
+
+    res.status(201).json({ message: "Request sent successfully!" });
+  } catch (error) {
+    console.error("Error sending request:", error);
+    res.status(500).json({ error: "Failed to send request" });
+  }
+};
 // Create a new request
 const createRequest = async (req, res) => {
   try {
@@ -146,4 +182,5 @@ module.exports = {
   approveRequest,
   rejectRequest,
   getRequestsByPosterId,
+  sendTeamRequest
 };

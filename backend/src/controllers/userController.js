@@ -1,5 +1,6 @@
-const { User, Role, Team } = require("../models"); // Ensure Team is included for relationships
+const { User, Role, Team, Request } = require("../models"); // Ensure Team is included for relationships
 const bcrypt = require("bcrypt");
+const { Op } = require("sequelize");
 
 // User Registration
 const createUserProfile = async (req, res) => {
@@ -86,17 +87,18 @@ const getUserProfile = async (req, res) => {
         "email",
         "roleId",
         "image",
+        "CV",
         "profileCompleted",
         "techStack",
       ],
       include: [
         {
           model: Role,
-          attributes: ["id", "role"],
+          attributes: [ "role"],
         },
         {
           model: Team,
-          attributes: ["id", "name"], // Include team info if applicable
+          attributes: ["name"], // Include team info if applicable
         },
       ],
     });
@@ -149,14 +151,18 @@ const completeUserProfile = async (req, res) => {
 
 // Update User Profile
 const updateUserProfile = async (req, res) => {
+  console.log("Files received:", req.files);
   try {
-    const { name, email, profileCompleted, techStack } = req.body;
+    const { name, email, profileCompleted, secondaryEmail,techStack } = req.body;
+
+    // Log files received
+    console.log("Files received:", req.files);
 
     // Parse techStack (if provided) from a JSON string
     let parsedTechStack = [];
     if (techStack) {
       try {
-        parsedTechStack = JSON.parse(techStack); // Parse array from JSON string
+        parsedTechStack = JSON.parse(techStack);
       } catch (err) {
         return res.status(400).json({ error: "Invalid format for techStack." });
       }
@@ -164,32 +170,30 @@ const updateUserProfile = async (req, res) => {
 
     // Construct updatedFields object
     const updatedFields = {
-      ...(name && { name }), // Update name if provided
-      ...(secondaryEmail && { secondaryEmail }), // Update secondary email if provided
-      ...(req.files?.cv && { cv: `/uploads/${req.files.cv[0].filename}` }), // Handle CV upload
-      ...(req.files?.image && {
-        image: `/uploads/${req.files.image[0].filename}`,
-      }), // Handle image upload
       ...(name && { name }),
       ...(email && { email }),
-      ...(profileCompleted !== undefined && {
-        profileCompleted: profileCompleted === "true",
-      }), // Convert to boolean
+      ...(secondaryEmail && { secondaryEmail }),
+      ...(profileCompleted !== undefined && { profileCompleted: profileCompleted === "true" }),
       ...(parsedTechStack.length > 0 && { techStack: parsedTechStack }),
     };
 
-    // Handle file uploads
-    if (req.files) {
-      if (req.files.cv && req.files.cv[0]) {
-        updatedFields.cv = req.files.cv[0].path; // Save CV file path
-      }
-      if (req.files.image && req.files.image[0]) {
-        updatedFields.image = req.files.image[0].path; // Save image file path
-      }
+    // Save CV and image to local directory
+    if (req.files.image) {
+      const imageFile = req.files.image[0];
+      const imagePath = path.join(__dirname, '..', 'uploads', imageFile.filename);
+      fs.renameSync(imageFile.path, imagePath); // Move file to uploads directory
+      updatedFields.image = `/uploads/${imageFile.filename}`;
+    }
+
+    if (req.files.CV) {
+      const cvFile = req.files.CV[0];
+      const cvPath = path.join(__dirname, '..', 'uploads', cvFile.filename);
+      fs.renameSync(cvFile.path, cvPath); // Move file to uploads directory
+      updatedFields.CV = `/uploads/${cvFile.filename}`;
     }
 
     // Update user in the database
-    const userId = req.user.id; // Assuming the user ID is retrieved from authentication
+    const userId = req.user.id;
     const [updated] = await User.update(updatedFields, {
       where: { id: userId },
     });
@@ -201,12 +205,9 @@ const updateUserProfile = async (req, res) => {
     return res.status(200).json({ message: "Profile updated successfully." });
   } catch (error) {
     console.error("Error updating profile:", error);
-    return res
-      .status(500)
-      .json({ error: "An error occurred while updating the profile." });
+    return res.status(500).json({ error: "An error occurred while updating the profile." });
   }
-};
-
+}
 const resetPassword = async (req, res) => {
   try {
     const { currentPassword, newPassword, confirmPassword } = req.body;
@@ -256,6 +257,44 @@ const resetPassword = async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 };
+const getUserRequests = async (req, res) => {
+  try {
+    const userId = req.user.id; // Get user ID from token
+
+    // Find all requests where the user is the receiver
+    const requests = await Request.findAll({ where: { receiverId: userId, isDeleted: false } });
+
+    res.status(200).json({ requests });
+  } catch (error) {
+    console.error("Error fetching user requests:", error);
+    res.status(500).json({ error: "Failed to retrieve requests" });
+  }
+};
+const searchUsers = async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    if (!email) {
+      return res.status(400).json({ error: "Email query parameter is required" });
+    }
+
+    // Search users with email containing the input (case insensitive)
+    const users = await User.findAll({
+      where: {
+        email: {
+          [Op.iLike]: `%${email}%`, // Case-insensitive partial match
+        },
+        teamId:null,
+      },
+      attributes: ["id", "name", "email"], // Return only necessary fields
+    });
+
+    res.json(users);
+  } catch (error) {
+    console.error("Error searching users:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+};
 
 module.exports = {
   createUserProfile,
@@ -263,4 +302,6 @@ module.exports = {
   completeUserProfile,
   updateUserProfile,
   resetPassword,
+  getUserRequests,
+  searchUsers
 };

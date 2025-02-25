@@ -25,6 +25,10 @@ const Request = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: true,
     },
+    receiverId : {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+    },
     isDeleted: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

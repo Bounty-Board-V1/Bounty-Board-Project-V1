@@ -19,7 +19,7 @@ import { useAuth } from "@/context/AuthContext";
 import TechStack from "@/components/TechStack";
 
 export default function AccountPage() {
-  const { user } = useAuth(); // Fetch and validate user
+  const { user, profile } = useAuth(); // Fetch and validate user
   const handleProfileUpdate = (updatedProfile) => {
     // Handle profile update logic here
   };

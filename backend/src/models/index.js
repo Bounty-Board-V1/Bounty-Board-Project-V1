@@ -16,63 +16,64 @@ User.belongsTo(Role, { foreignKey: "roleId" });
 Role.hasMany(User, { foreignKey: "roleId" });
 
 // ----------------------
-// User-Team Relationship
+// User-Team Relationship (User can belong to only one Team)
+User.belongsTo(Team, { foreignKey: 'teamId' });  // A user belongs to one team
+Team.hasMany(User, { foreignKey: 'teamId' });   // A team can have many users
+
 // ----------------------
-User.belongsTo(Team, { foreignKey: "teamId" });
-Team.hasMany(User, { foreignKey: "teamId" });
+// Team-Creator Relationship (User who created the team)
+User.hasMany(Team, { foreignKey: "createrId", as: "createdTeams" });
+Team.belongsTo(User, { foreignKey: "createrId", as: "creater" });
+
+// ----------------------
+// Team-Members Relationship (One user can only belong to one team)
+Team.hasMany(User, { foreignKey: "teamId", as: "members" });  // One team can have many members
 
 // ----------------------
 // User-Notification Relationship
-// ----------------------
 User.hasMany(Notification, { foreignKey: "userId" });
 Notification.belongsTo(User, { foreignKey: "userId" });
 
 // ----------------------
 // User-Project Relationship (Poster of Project)
-// ----------------------
 User.hasMany(Project, { foreignKey: "posterId", as: "postedProjects" });
 Project.belongsTo(User, { foreignKey: "posterId", as: "poster" });
 
 // ----------------------
 // Team-Project Request Relationship
-// ----------------------
-// A Team can request multiple projects
 Team.hasMany(Request, { foreignKey: "teamId", as: "requests" });
 Request.belongsTo(Team, { foreignKey: "teamId", as: "requestingTeam" });
 
-// A Project can receive multiple requests from teams
 Project.hasMany(Request, { foreignKey: "projectId", as: "requests" });
 Request.belongsTo(Project, { foreignKey: "projectId", as: "requestedProject" });
 
 // ----------------------
 // Request-User Relationship (Project Poster receives requests)
-// ----------------------
-// A project poster (User) receives multiple requests for their project
 User.hasMany(Request, { foreignKey: "posterId", as: "receivedRequests" });
 Request.belongsTo(User, { foreignKey: "posterId", as: "poster" });
 
 // ----------------------
-// Project-Team Assignment (After Approval)
+// Request-User (Receiver)
+User.hasMany(Request, { foreignKey: "receiverId", as: "requestsReceived" });
+Request.belongsTo(User, { foreignKey: "receiverId", as: "receiver" });
+
 // ----------------------
-// A Project can have only ONE approved team
+// Project-Team Assignment (After Approval)
 Project.belongsTo(Team, { foreignKey: "approvedTeamId", as: "approvedTeam" });
 Team.hasOne(Project, { foreignKey: "approvedTeamId", as: "assignedProject" });
 
 // ----------------------
 // Project-Milestone Relationship
-// ----------------------
 Project.hasMany(Milestone, { foreignKey: "projectId" });
 Milestone.belongsTo(Project, { foreignKey: "projectId" });
 
 // ----------------------
 // Milestone-SubmissionStatus Relationship
-// ----------------------
 Milestone.belongsTo(SubmissionStatus, { foreignKey: "statusId" });
 SubmissionStatus.hasMany(Milestone, { foreignKey: "statusId" });
 
 // ----------------------
 // Export Models
-// ----------------------
 module.exports = {
   sequelize,
   Role,

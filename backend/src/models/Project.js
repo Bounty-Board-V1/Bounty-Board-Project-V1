@@ -12,23 +12,23 @@ const Project = sequelize.define("Project", {
     allowNull: false,
   },
   description: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: true,
   },
   posterId: {
     type: DataTypes.INTEGER,
     allowNull: true,
   },
-  statusId: {
-    type: DataTypes.INTEGER,
+  status: {
+    type: DataTypes.STRING,
     allowNull: true,
   },
   rewardAmount: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: true,
   },
   techStack: {
-    type: DataTypes.JSON, // Store array as JSON
+    type: DataTypes.ARRAY(DataTypes.STRING),
     allowNull: true,
   },
   estimatedTime: {
