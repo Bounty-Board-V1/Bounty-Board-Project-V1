@@ -42,7 +42,7 @@ function ProjectSlider({ project, isOpen, onClose }) {
   };
 
   const isRequestDisabled = (status) => {
-    return status.toLowerCase() !== "not started";
+    // return status.toLowerCase() !== "not started";
   };
 
   const handleRequest = () => {
@@ -79,9 +79,7 @@ function ProjectSlider({ project, isOpen, onClose }) {
             <h2 className="text-2xl font-bold mb-2 flex items-center">
               {fallback(project.title)}
               <span
-                className={`ml-2 px-2 py-1 rounded-full text-sm font-semibold ${getStatusColor(
-                  project.status
-                )}`}
+                className={`ml-2 px-2 py-1 rounded-full text-sm font-semibold`}
               >
                 {fallback(project.status)}
               </span>
