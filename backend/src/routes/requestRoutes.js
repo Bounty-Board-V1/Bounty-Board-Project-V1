@@ -5,9 +5,12 @@ const {
   createRequest,
   approveRequest,
   rejectRequest,
-  getRequestsByPosterId
+  getRequestsByPosterId,
+  sendTeamRequest
 } = require("../controllers/requestController");
 
+// Send Team Request
+router.post("/team", authMiddleware,sendTeamRequest);
 // Request routes
 router.post("/", authMiddleware,createRequest); // Create a new request
 router.post("/:id/approve",authMiddleware, approveRequest); // Approve a request

@@ -25,6 +25,9 @@ function ProjectSlider({ project, isOpen, onClose }) {
 
   if (!project) return null;
 
+  // Fallback function to handle undefined or null values
+  const fallback = (value) => (value === null || value === undefined ? "None" : value);
+
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
       case "in progress":
@@ -74,56 +77,62 @@ function ProjectSlider({ project, isOpen, onClose }) {
           </Button>
           <div className="mb-6">
             <h2 className="text-2xl font-bold mb-2 flex items-center">
-              {project.title}
+              {fallback(project.title)}
               <span
                 className={`ml-2 px-2 py-1 rounded-full text-sm font-semibold ${getStatusColor(
                   project.status
                 )}`}
               >
-                {project.status}
+                {fallback(project.status)}
               </span>
             </h2>
             <div className="flex flex-wrap gap-2 mb-4">
-              {project.techStack.map((tech) => (
-                <span
-                  key={tech}
-                  className="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700"
-                >
-                  {tech}
-                </span>
-              ))}
+              {project.techStack && project.techStack.length > 0
+                ? project.techStack.map((tech) => (
+                    <span
+                      key={tech}
+                      className="bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700"
+                    >
+                      {fallback(tech)}
+                    </span>
+                  ))
+                : "None"}
             </div>
-            <p className="text-gray-600">{project.description}</p>
+            <p className="text-gray-600">{fallback(project.description)}</p>
           </div>
           <div className="space-y-4 flex-grow">
             <div>
               <h3 className="font-semibold">Estimated Time</h3>
-              <p>{project.estimatedTime}</p>
+              <p>{fallback(project.estimatedTime)}</p>
             </div>
             <div>
               <h3 className="font-semibold">Team Size</h3>
-              <p>{project.teamSize}</p>
+              <p>{fallback(project.teamSize)}</p>
             </div>
             <div>
               <h3 className="font-semibold">Payment Price</h3>
-              <p>${project.paymentPrice.toLocaleString()}</p>
+              <p>${fallback(project.paymentPrice)?.toLocaleString()}</p>
             </div>
             <div>
               <h3 className="font-semibold">Posted by</h3>
-              <p>{project.posterName}</p>
+              <p>{fallback(project.posterName)}</p>
             </div>
             <div>
               <h3 className="font-semibold">Milestones</h3>
-              <ul className="list-disc pl-5 mt-2">
-                {project.milestones.map((milestone) => (
-                  <li key={milestone.id} className="mb-2">
-                    <span className="font-medium">{milestone.name}</span>
-                    <span className="ml-2 text-sm text-gray-500">
-                      ({milestone.status})
-                    </span>
-                  </li>
-                ))}
-              </ul>
+              {project.milestones && project.milestones.length > 0 ? (
+                <ul className="list-disc pl-5 mt-2">
+                  {project.milestones.map((milestone) => (
+                    <li key={milestone.id} className="mb-2">
+                      <span className="font-medium">{fallback(milestone.name)}</span>
+                      <span className="ml-2 text-sm text-gray-500">
+                        ({fallback(milestone.status)})
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No milestones available</p>
+              )}
             </div>
           </div>
           <div className="mt-8">

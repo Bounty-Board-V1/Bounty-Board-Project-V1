@@ -8,6 +8,28 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [profile, setProfile] = useState(null);
+ useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const response = await fetch("http://localhost:5000/api/user/profile", {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${token}`, // Add the token here
+          }});
+        if (!response.ok) {
+          throw new Error("Failed to fetch profile");
+        }
+        const data = await response.json();
+        setProfile(data.user);
+      } catch (err) {
+        console.log (err.message);
+      } 
+    };
+
+    fetchProjects();
+  }, []);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -38,7 +60,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, profile }}>
       {children}
     </AuthContext.Provider>
   );

@@ -8,6 +8,8 @@ const {createUserProfile,
   getUserProfile,
   updateUserProfile,
   resetPassword,
+  getUserRequests,
+  searchUsers
 } = require("../controllers/userController");
 const router = express.Router();
 
@@ -19,7 +21,7 @@ router.get("/profile", authMiddleware, getUserProfile);
 router.put(
   "/profile",
   upload.fields([
-    { name: "cv", maxCount: 1 },
+    { name: "CV", maxCount: 1 },
     { name: "image", maxCount: 1 },
   ]),
   authMiddleware,
@@ -28,5 +30,7 @@ router.put(
 
 // Reset password
 router.post("/reset-password", authMiddleware, resetPassword);
+router.get("/requests", authMiddleware, getUserRequests);
+router.get("/searchUsers", authMiddleware,searchUsers)
 
 module.exports = router;

@@ -13,7 +13,7 @@ module.exports = {
     }
 
     // Hash the password
-    const hashedPassword = await bcrypt.hash("Poster2024", 10);
+    const hashedPassword = await bcrypt.hash("Hunter2024", 10);
 
     // Insert the admin user
     await User.create({
