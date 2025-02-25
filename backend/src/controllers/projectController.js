@@ -3,15 +3,7 @@ const { Project, Team, Reward } = require("../models");
 // Get all projects
 const getAllProjects = async (req, res) => {
   try {
-    const projects = await Project.findAll({
-      include: [
-        {
-          model: Team,
-          as: "team", // Assumed association with Team
-          attributes: ["id", "name"], // Include the team name and id
-        },
-      ],
-    });
+    const projects = await Project.findAll();
     res.status(200).json(projects);
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch projects" });
@@ -21,19 +13,7 @@ const getAllProjects = async (req, res) => {
 // Get a single project by ID
 const getProject = async (req, res) => {
   try {
-    const project = await Project.findByPk(req.params.id, {
-      include: [
-        {
-          model: Team,
-          as: "team", // Assumed association with Team
-          attributes: ["id", "name"], // Include team details
-        },
-        {
-          model: Reward,
-          attributes: ["amount", "currency"], // Include reward details
-        },
-      ],
-    });
+    const project = await Project.findByPk(req.params.id);
     if (!project) {
       return res.status(404).json({ error: "Project not found" });
     }
@@ -93,15 +73,8 @@ const updateProject = async (req, res) => {
       return res.status(404).json({ error: "Project not found" });
     }
 
-    // Validate team assignment
-    const team = await Team.findByPk(teamId);
-    if (team.isDeleted) {
-      return res.status(404).json({ error: "Assigned team is deleted" });
-    }
-
     project.title = title || project.title;
     project.description = description || project.description;
-    project.teamId = teamId || project.teamId;
     project.rewardAmount = rewardAmount || project.rewardAmount;
     project.techStack = techStack || project.techStack;
     project.estimatedTime = estimatedTime || project.estimatedTime;

@@ -25,21 +25,21 @@ function ProjectSlider({ project, isOpen, onClose }) {
 
   if (!project) return null;
 
-  const getStatusColor = (status) => {
-    switch (status.toLowerCase()) {
-      case "in progress":
-        return "bg-blue-100 text-blue-800";
-      case "completed":
-        return "bg-green-100 text-green-800";
-      case "not started":
-        return "bg-gray-100 text-gray-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
+  // const getStatusColor = (status) => {
+  //   switch (status.toLowerCase()) {
+  //     case "in progress":
+  //       return "bg-blue-100 text-blue-800";
+  //     case "completed":
+  //       return "bg-green-100 text-green-800";
+  //     case "not started":
+  //       return "bg-gray-100 text-gray-800";
+  //     default:
+  //       return "bg-gray-100 text-gray-800";
+  //   }
+  // };
 
   const isRequestDisabled = (status) => {
-    return status.toLowerCase() !== "not started";
+    // return status.toLowerCase() !== "not started";
   };
 
   const handleRequest = () => {
@@ -76,9 +76,7 @@ function ProjectSlider({ project, isOpen, onClose }) {
             <h2 className="text-2xl font-bold mb-2 flex items-center">
               {project.title}
               <span
-                className={`ml-2 px-2 py-1 rounded-full text-sm font-semibold ${getStatusColor(
-                  project.status
-                )}`}
+                className={`ml-2 px-2 py-1 rounded-full text-sm font-semibold`}
               >
                 {project.status}
               </span>
@@ -106,7 +104,7 @@ function ProjectSlider({ project, isOpen, onClose }) {
             </div>
             <div>
               <h3 className="font-semibold">Payment Price</h3>
-              <p>${project.paymentPrice.toLocaleString()}</p>
+              {/* <p>${project.paymentPrice.toLocaleString()}</p> */}
             </div>
             <div>
               <h3 className="font-semibold">Posted by</h3>
@@ -114,7 +112,7 @@ function ProjectSlider({ project, isOpen, onClose }) {
             </div>
             <div>
               <h3 className="font-semibold">Milestones</h3>
-              <ul className="list-disc pl-5 mt-2">
+              {/* <ul className="list-disc pl-5 mt-2">
                 {project.milestones.map((milestone) => (
                   <li key={milestone.id} className="mb-2">
                     <span className="font-medium">{milestone.name}</span>
@@ -123,7 +121,7 @@ function ProjectSlider({ project, isOpen, onClose }) {
                     </span>
                   </li>
                 ))}
-              </ul>
+              </ul> */}
             </div>
           </div>
           <div className="mt-8">

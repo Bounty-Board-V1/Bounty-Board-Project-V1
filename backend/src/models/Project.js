@@ -28,7 +28,7 @@ const Project = sequelize.define("Project", {
     allowNull: true,
   },
   techStack: {
-    type: DataTypes.STRING,
+    type: DataTypes.JSON, // Store array as JSON
     allowNull: true,
   },
   estimatedTime: {
